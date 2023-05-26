@@ -26,7 +26,6 @@ int index1, index2, index3, index4, index5, index6, index7, index8, index9, inde
 
 void setup()
 {
-  // 50 mS Message
   canMsg[0].can_id  = 0x01;
   canMsg[0].can_dlc = 8;
   canMsg[0].data[0] = 0x01;
@@ -38,7 +37,6 @@ void setup()
   canMsg[0].data[6] = 0x01;
   canMsg[0].data[7] = 0x01;
 
-  // 100 mS Messages
   canMsg[1].can_id  = 0x20F;
   canMsg[1].can_dlc = 8;
   canMsg[1].data[0] = 0x02;
@@ -72,7 +70,6 @@ void setup()
   canMsg[3].data[6] = 0x04;
   canMsg[3].data[7] = 0x04;
 
-  // 200 mS Messages
   canMsg[4].can_id  = 0x08F;
   canMsg[4].can_dlc = 8;
   canMsg[4].data[0] = 0x05;
@@ -139,7 +136,6 @@ void setup()
   canMsg[9].data[6] = 0x10;
   canMsg[9].data[7] = 0x10;
 
-  // 1000 mS Message
   canMsg[10].can_id  = 0x28F;
   canMsg[10].can_dlc = 8;
   canMsg[10].data[0] = 0x11;
@@ -151,7 +147,6 @@ void setup()
   canMsg[10].data[6] = 0x11;
   canMsg[10].data[7] = 0x11;
 
-  // 2000 mS Messages
   canMsg[11].can_id  = 0x108;
   canMsg[11].can_dlc = 8;
   canMsg[11].data[0] = 0x12;
@@ -174,7 +169,6 @@ void setup()
   canMsg[12].data[6] = 0x13;
   canMsg[12].data[7] = 0x13;
 
-  // 5000 mS Messages
   canMsg[13].can_id  = 0x218;
   canMsg[13].can_dlc = 8;
   canMsg[13].data[0] = 0x14;
@@ -208,7 +202,6 @@ void setup()
   canMsg[15].data[6] = 0x16;
   canMsg[15].data[7] = 0x16;
 
-  // Event Baes Messages (10000 mS)
   canMsg[16].can_id  = 0x748;
   canMsg[16].can_dlc = 8;
   canMsg[16].data[0] = 0x17;
@@ -270,7 +263,6 @@ void setup()
     timeMsg[i] = timeNow;
   }
 
-
   timeDelay[0] = 100000ul;
   timeDelay[1] = 0ul;
   timeDelay[2] = 0ul;
@@ -291,7 +283,6 @@ void setup()
   timeDelay[17] = 0ul;
   timeDelay[18] = 0ul;
   timeDelay[19] = 0ul;
-
 
   offsetTime[0] = 1000ul;
   for (int i = 1; i <= 19; i++)
@@ -322,21 +313,10 @@ void loop()
     index10 = inputString.indexOf(',', index9 + 1);
     index11 = inputString.indexOf(',', index10 + 1);
 
-
-
-
     strSlot = inputString.substring(0, index1);
     strCanId = inputString.substring(index1 + 1, index2);
     strDlc = inputString.substring(index2 + 1, index3);
-    //    strD0 = inputString.substring(index3 + 1, index4);
-    //    strD1 = inputString.substring(index4 + 1, index5);
-    //    strD2 = inputString.substring(index5 + 1, index6);
-    //    strD3 = inputString.substring(index6 + 1, index7);
-    //    strD4 = inputString.substring(index7 + 1, index8);
-    //    strD5 = inputString.substring(index8 + 1, index9);
-    //    strD6 = inputString.substring(index9 + 1, index10);
-    //    strD7 = inputString.substring(index10 + 1, index11);
-
+    
     strMyData[0] = inputString.substring(index3 + 1, index4);
     strMyData[1] = inputString.substring(index4 + 1, index5);
     strMyData[2] = inputString.substring(index5 + 1, index6);
@@ -350,65 +330,20 @@ void loop()
 
     inputString = "";
     stringComplete = false;
-
-    //    Serial.print(strSlot);
-    //    Serial.print("-");
-    //    Serial.print(strCanId);
-    //    Serial.print("-");
-    //    Serial.print(strDlc);
-    //    Serial.print("-");
-    //    Serial.print(strD0);
-    //    Serial.print("-");
-    //    Serial.print(strD1);
-    //    Serial.print("-");
-    //    Serial.print(strD2);
-    //    Serial.print("-");
-    //    Serial.print(strD3);
-    //    Serial.print("-");
-    //    Serial.print(strD4);
-    //    Serial.print("-");
-    //    Serial.print(strD5);
-    //    Serial.print("-");
-    //    Serial.print(strD6);
-    //    Serial.print("-");
-    //    Serial.print(strD7);
-    //    Serial.print("-");
-    //    Serial.println(strPeriod);
-
     slot = strSlot.toInt();
     canId = strCanId.toInt();
     dlc = strDlc.toInt();
-    //    d0 = strD0.toInt();
-    //    d1 = strD1.toInt();
-    //    d2 = strD2.toInt();
-    //    d3 = strD3.toInt();
-    //    d4 = strD4.toInt();
-    //    d5 = strD5.toInt();
-    //    d6 = strD6.toInt();
-    //    d7 = strD7.toInt();
-
+    
     for (int i = 0; i < dlc; i++)
     {
       bMyData[i] = strMyData[i].toInt();
     }
 
-
-
-
-
     period = strPeriod.toInt();
 
     canMsg[slot].can_id  = canId;
     canMsg[slot].can_dlc = dlc;
-    //    canMsg[slot].data[0] = d0;
-    //    canMsg[slot].data[1] = d1;
-    //    canMsg[slot].data[2] = d2;
-    //    canMsg[slot].data[3] = d3;
-    //    canMsg[slot].data[4] = d4;
-    //    canMsg[slot].data[5] = d5;
-    //    canMsg[slot].data[6] = d6;
-    //    canMsg[slot].data[7] = d7;
-
+    
     for (int i = 0 ; i < 8; i++)
     {
       canMsg[slot].data[i] = 0x00; 
@@ -457,8 +392,6 @@ void loop()
       Serial.println(String(timeDelay[j]));
     }
   }
-
-
   // sending messages
   for (int i = 0; i <= 19; i++)
   {
