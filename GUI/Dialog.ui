@@ -45,7 +45,7 @@
       </rect>
      </property>
      <property name="title">
-      <string>Serial Port</string>
+      <string>Transmitter Serial Port</string>
      </property>
      <widget class="QComboBox" name="cmbTxPortNames">
       <property name="geometry">
@@ -9340,7 +9340,7 @@
    </widget>
    <widget class="QWidget" name="tab_icn8532">
     <attribute name="title">
-     <string>ICN 8532</string>
+     <string>Crouse[1]</string>
     </attribute>
     <widget class="QGroupBox" name="groupBox">
      <property name="geometry">
