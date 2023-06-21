@@ -1050,6 +1050,7 @@ class Dialog(QDialog):
         if self.txSerialDeviceIsConnected == True:
             try:
                 sId = str(int(strID, 16))
+                print("ID: ", sId)
                 if str(int(strD0, 16)) != "":
                     sD0 = str(int(strD0, 16))
                 else:
@@ -2265,7 +2266,7 @@ class Dialog(QDialog):
             TpmsTireTempratureStatus = "00"
         elif self.cmbTireTempratureStatus.currentIndex() == 1:
             print("Tire temperature high")
-            TpmsTireTempratureStatus = "01"
+            TpmsTireTempratureStatus = "10"
 
         # --------------------------------------------------------
         sD1 = TpmsTireTempratureStatus + TpmsTirePressureStatus + TpmsLearningStatus + TpmsTireLeakage
