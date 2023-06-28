@@ -27,6 +27,8 @@ class Dialog(QDialog):
         self.bind_controls()
         self.counter = 0
         self.messages = []
+        dialValue = self.dialWheelSpeed.value()
+        self.leWheelSpeed.setText(str(dialValue))
 
         # Connections tab ==============================================================================================
         self.rxSerialPort = None
@@ -480,6 +482,13 @@ class Dialog(QDialog):
         self.btnSetTpmsSlot.clicked.connect(self.btn_set_tpms_slot_handler)
         self.btnCbmEmsInfo8Slot.clicked.connect(self.btn_cbm_ems_info8_click_handler)
         self.btnHighSpeedInfo3Slot.clicked.connect(self.btn_high_speed_info3_click_handler)
+        self.btnSetBodyNetworkManagementSlot.clicked.connect(self.btn_cbm_body_network_click_handler)
+        self.btnSetFAMInformationSlot.clicked.connect(self.btn_fam_info_click_handler)
+        self.dialWheelSpeed.valueChanged.connect(self.dial_speed_wheel_value_change_handler)
+        self.btnSetABSInformationSlot.clicked.connect(self.btn_ABS_information_click_handler)
+
+
+
 
     def open_rx_serial_port(self):
         if not self.rxSerialDeviceIsConnected:
@@ -2911,8 +2920,373 @@ class Dialog(QDialog):
                          sHexD7.upper(),
                          "100")
 
+    def btn_cbm_body_network_click_handler(self):
+        sD0 = ""
+        sD1 = ""
+        sD2 = ""
+        sD3 = ""
+        sD4 = ""
+        sD5 = ""
+        sD6 = ""
+        sD7 = ""
 
+        sHexD0 = ""
+        sHexD1 = ""
+        sHexD2 = ""
+        sHexD3 = ""
+        sHexD4 = ""
+        sHexD5 = ""
+        sHexD6 = ""
+        sHexD7 = ""
 
+        # --------------------------------------------------------
+        BodyNetworkManagement = ""                                  # [0.0~0.2]
+        if self.cmbBodyNetworkManagement.currentIndex() == 0:       # Sleep
+            BodyNetworkManagement = "000"
+        elif self.cmbBodyNetworkManagement.currentIndex() == 1:     # Normal
+            BodyNetworkManagement = "001"
+        elif self.cmbBodyNetworkManagement.currentIndex() == 2:     # Go To Sleep
+            BodyNetworkManagement = "010"
+        elif self.cmbBodyNetworkManagement.currentIndex() == 3:     # Wakeup
+            BodyNetworkManagement = "011"
+        elif self.cmbBodyNetworkManagement.currentIndex() == 4:     # COM OFF
+            BodyNetworkManagement = "100"
+        elif self.cmbBodyNetworkManagement.currentIndex() == 5:     # Not Available
+            BodyNetworkManagement = "111"
+
+        SupervisionState = ""                                       # [0.3]
+        if self.cmbSupervisionState.currentIndex() == 0:            # Off
+            SupervisionState = "0"
+        elif self.cmbSupervisionState.currentIndex() == 1:          # Ready
+            SupervisionState = "1"
+        # --------------------------------------------------------
+        sD0 = ("0000" +
+                SupervisionState +
+                BodyNetworkManagement)
+
+        print(sD0)
+        sHexD0 = format(int(sD0, 2), '02x')
+        print("sHexD0", sHexD0)
+        # --------------------------------------------------------
+        ABSIsAbsent = ""
+        if self.chkAbsIsAbsent.isChecked():                         # [1.0]
+            ABSIsAbsent = "1"
+        else:
+            ABSIsAbsent = "0"
+        # --------------------------------------------------------
+        CBMIsAbsent = ""                                            # [1.1]
+        if self.chkCBMIsAbsent.isChecked():
+            CBMIsAbsent = "1"
+        else:
+            CBMIsAbsent = "0"
+        # --------------------------------------------------------
+        EMSIsAbsent = ""                                            #[1.2]
+        if self.chkEMSIsAbsent.isChecked():
+            EMSIsAbsent = "1"
+        else:
+            EMSIsAbsent = "0"
+        # --------------------------------------------------------
+        EPASIsAbsent = ""                                           #[1.3]
+        if self.chkEPASIsAbsent.isChecked():
+            EPASIsAbsent = "1"
+        else:
+            EPASIsAbsent = "0"
+        # --------------------------------------------------------
+        SASIsAbsent = ""                                            #[1.4]
+        if self.chkSASIsAbsent.isChecked():
+            SASIsAbsent = "1"
+        else:
+            SASIsAbsent = "0"
+        # --------------------------------------------------------
+        TCUIsAbsent = ""                                            #[1.5]
+        if self.chkTCUIsAbsent.isChecked():
+            TCUIsAbsent = "1"
+        else:
+            TCUIsAbsent = "0"
+        # --------------------------------------------------------
+        ClusterIsAbsent = ""                                        #[1.6]
+        if self.chkClusterIsAbsent.isChecked():
+            ClusterIsAbsent = "1"
+        else:
+            ClusterIsAbsent = "0"
+        # --------------------------------------------------------
+        ICUIsAbsent = ""                                            #[1.7]
+        if self.chkICUIsAbsent.isChecked():
+            ICUIsAbsent = "1"
+        else:
+            ICUIsAbsent = "0"
+        # --------------------------------------------------------
+        sD1 = (ICUIsAbsent +
+               ClusterIsAbsent +
+               TCUIsAbsent +
+               SASIsAbsent +
+               EPASIsAbsent +
+               EMSIsAbsent +
+               CBMIsAbsent +
+               ABSIsAbsent)
+
+        print(sD1)
+        sHexD1 = format(int(sD1, 2), '02x')
+        print("sHexD1", sHexD1)
+        # --------------------------------------------------------
+        sD2 = "00000000"
+        sHexD2 = format(int(sD2, 2), '02x')
+        print("sHexD2", sHexD2)
+        # --------------------------------------------------------
+        sD3 = "00000000"
+        sHexD3 = format(int(sD3, 2), '02x')
+        print("sHexD3", sHexD3)
+        # --------------------------------------------------------
+        sD4 = "00000000"
+        sHexD4 = format(int(sD4, 2), '02x')
+        print("sHexD4", sHexD4)
+        # --------------------------------------------------------
+        sD5 = "00000000"
+        sHexD5 = format(int(sD5, 2), '02x')
+        print("sHexD5", sHexD5)
+        # --------------------------------------------------------
+        sD6 = "00000000"
+        sHexD6 = format(int(sD6, 2), '02x')
+        print("sHexD6", sHexD6)
+        # --------------------------------------------------------
+        sD7 = "00000000"
+        sHexD7 = format(int(sD7, 2), '02x')
+        print("sHexD7", sHexD7)
+        # --------------------------------------------------------
+        self.set_tx_slot(str(self.cmbBodyNetworkManagementSlot.currentIndex() + 1),
+                         "181",
+                         "4",
+                         sHexD0.upper(),
+                         sHexD1.upper(),
+                         sHexD2.upper(),
+                         sHexD3.upper(),
+                         sHexD4.upper(),
+                         sHexD5.upper(),
+                         sHexD6.upper(),
+                         sHexD7.upper(),
+                         "100")
+
+    def btn_fam_info_click_handler(self):
+        BatteryChargeWarning = ""
+        if self.chkBatteryChargeWarning.isChecked():            # [0.0]
+            BatteryChargeWarning = "1"
+        else:
+            BatteryChargeWarning = "0"
+        # --------------------------------------------------------
+        EngineOilPressure = ""
+        if self.chkEngineOilPressureWarning.isChecked():        # [0.2]
+            EngineOilPressure = "1"
+        else:
+            EngineOilPressure = "0"
+        # --------------------------------------------------------
+        BrakePadWarning = ""
+        if self.BrakePadWarning.isChecked():                    # [0.5]
+            BrakePadWarning = "1"
+        else:
+            BrakePadWarning = "0"
+        # --------------------------------------------------------
+        BrakeOilLevelWarning = ""
+        if self.chkBrakeOilLevelWarning.isChecked():            # [0.6]
+            BrakeOilLevelWarning = "1"
+        else:
+            BrakeOilLevelWarning = "0"
+        # --------------------------------------------------------
+        sD0 = ("0" +
+               BrakeOilLevelWarning +
+               BrakePadWarning +
+               "00" +
+               EngineOilPressure +
+                "0" +
+               BatteryChargeWarning)
+
+        print(sD0)
+        sHexD0 = format(int(sD0, 2), '02x')
+        print("sHexD0", sHexD0)
+        # --------------------------------------------------------
+        ReverseGearSwitchStatus = ""
+        if self.chkReverseGearSwitchStatus.isChecked():         # [1.0]
+            ReverseGearSwitchStatus = "1"
+        else:
+            ReverseGearSwitchStatus = "0"
+        # --------------------------------------------------------
+        WiperZeroPositionSwitchStatus = ""
+        if self.chkWiperZeroPositionStatus.isChecked():         # [1.1]
+            WiperZeroPositionSwitchStatus = "1"
+        else:
+            WiperZeroPositionSwitchStatus = "0"
+        # --------------------------------------------------------
+        AcCompressorClutchStatus = ""
+        if self.chkAcCompressorClutchStatus.isChecked():        # [1.2]
+            AcCompressorClutchStatus = "1"
+        else:
+            AcCompressorClutchStatus = "0"
+        # --------------------------------------------------------
+        sD1 = ("00000" +
+               AcCompressorClutchStatus +
+               WiperZeroPositionSwitchStatus +
+               ReverseGearSwitchStatus)
+
+        print(sD1)
+        sHexD1 = format(int(sD1, 2), '02x')
+        print("sHexD1", sHexD1)
+        # --------------------------------------------------------
+        sD2 = "00000000"
+        sHexD2 = format(int(sD2, 2), '02x')
+        print("sHexD2", sHexD2)
+        # --------------------------------------------------------
+        sD3 = "00000000"
+        sHexD3 = format(int(sD3, 2), '02x')
+        print("sHexD3", sHexD3)
+        # --------------------------------------------------------
+        sD4 = "00000000"
+        sHexD4 = format(int(sD4, 2), '02x')
+        print("sHexD4", sHexD4)
+        # --------------------------------------------------------
+        sD5 = "00000000"
+        sHexD5 = format(int(sD5, 2), '02x')
+        print("sHexD5", sHexD5)
+        # --------------------------------------------------------
+        sD6 = "00000000"
+        sHexD6 = format(int(sD6, 2), '02x')
+        print("sHexD6", sHexD6)
+        # --------------------------------------------------------
+        sD7 = "00000000"
+        sHexD7 = format(int(sD7, 2), '02x')
+        print("sHexD7", sHexD7)
+        # --------------------------------------------------------
+        self.set_tx_slot(str(self.cmbFAMInformation.currentIndex() + 1),
+                         "2C2",
+                         "2",
+                         sHexD0.upper(),
+                         sHexD1.upper(),
+                         sHexD2.upper(),
+                         sHexD3.upper(),
+                         sHexD4.upper(),
+                         sHexD5.upper(),
+                         sHexD6.upper(),
+                         sHexD7.upper(),
+                         "100")
+
+    def dial_speed_wheel_value_change_handler(self):
+        getValue = self.dialWheelSpeed.value()
+        self.leWheelSpeed.setText(str(getValue))
+
+    def btn_ABS_information_click_handler(self):
+        sD0 = ""
+        sD1 = ""
+        sD2 = ""
+        sD3 = ""
+        sD4 = ""
+        sD5 = ""
+        sD6 = ""
+        sD7 = ""
+
+        sHexD0 = ""
+        sHexD1 = ""
+        sHexD2 = ""
+        sHexD3 = ""
+        sHexD4 = ""
+        sHexD5 = ""
+        sHexD6 = ""
+        sHexD7 = ""
+        # --------------------------------------------------------
+        ABSError = ""
+        if self.chkABSError.isChecked():                # [0.0]
+            ABSError = "1"
+        else:
+            ABSError = "0"
+        # --------------------------------------------------------
+        EBDError = ""
+        if self.chkEBDError.isChecked():                # [0.1]
+            EBDError = "1"
+        else:
+            EBDError = "0"
+        # --------------------------------------------------------
+        ABSActive = ""
+        if self.chkABSActive.isChecked():               # [0.2]
+            ABSActive = "1"
+        else:
+            ABSActive = "0"
+        # --------------------------------------------------------
+        ABSWarning = ""
+        if self.chkABSWarning.isChecked():              # [0.3]
+            ABSWarning = "1"
+        else:
+            ABSWarning = "0"
+        # --------------------------------------------------------
+        EBDWarning = ""
+        if self.chkEBDWarning.isChecked():              # [0.4]
+            EBDWarning = "1"
+        else:
+            EBDWarning = "0"
+        # --------------------------------------------------------
+        ABSDiag = ""
+        if self.chkABSDiag.isChecked():                 # [0.5]
+            ABSDiag = "1"
+        else:
+            ABSDiag = "0"
+        # --------------------------------------------------------
+        EBDActive = ""
+        if self.chkEBDActive.isChecked():               # [0.6]
+            EBDActive = "1"
+        else:
+            EBDActive = "0"
+        # --------------------------------------------------------
+        sD0 = ("0" +
+               EBDActive +
+               ABSDiag +
+               EBDWarning +
+               ABSWarning +
+               ABSActive +
+               EBDError +
+               ABSError)
+
+        print(sD0)
+        sHexD0 = format(int(sD0, 2), '02x')
+        print("sHexD0", sHexD0)
+        # --------------------------------------------------------
+        ESPSwitch = ""
+        if self.chkESPSwitch.isChecked():                   # [1.0]
+            ESPSwitch = "1"
+        else:
+            ESPSwitch = "0"
+        # --------------------------------------------------------
+        ESPWarning = ""                                         # [1.1~1.2]
+        if self.cmbESPWarning.currentIndex() == 0:              # No Warning
+            ESPWarning = "00"
+        elif self.cmbESPWarning.currentIndex() == 1:            # Warning
+            ESPWarning = "01"
+        elif self.cmbESPWarning.currentIndex() == 2:            # Active
+            ESPWarning = "10"
+        # --------------------------------------------------------
+        SpeedWheelDec = self.dialWheelSpeed.value()
+        SpeedWheelHex = hex(SpeedWheelDec)
+        print(SpeedWheelDec, SpeedWheelHex, type(SpeedWheelHex))
+        StripedSpeedWheelHex = SpeedWheelHex[2:]
+        print("Striped Hex", StripedSpeedWheelHex)
+        CleanHex = ""
+        if len(StripedSpeedWheelHex) == 0:
+            CleanHex = "000"
+        elif len(StripedSpeedWheelHex) == 1:
+            CleanHex = "00" + StripedSpeedWheelHex
+        elif len(StripedSpeedWheelHex) == 2:
+            CleanHex = "0" + StripedSpeedWheelHex
+        else:
+            CleanHex = StripedSpeedWheelHex
+
+        CleanHexCapital = CleanHex.upper()
+        print("Clean Capital Hex", CleanHexCapital)
+
+        FourWheelSpeed = CleanHexCapital + CleanHexCapital + CleanHexCapital + CleanHexCapital
+        print("Four Wheel Speed: ", FourWheelSpeed)
+        sHexD7 = FourWheelSpeed[0:2]
+        print("sHexD7", sHexD7)
+        sHexD6 = FourWheelSpeed[3:5]
+        print("sHexD6", sHexD6)
+        sHexD5 = FourWheelSpeed[6:8]
+        print("sHexD5", sHexD5)
+        sHexD4 = FourWheelSpeed[9:11]
+        print("sHexD4", sHexD4)
 
 
 
