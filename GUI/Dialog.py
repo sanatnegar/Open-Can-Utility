@@ -16,6 +16,7 @@ class Dialog(QDialog):
     def __init__(self):
         super(Dialog, self).__init__()
 
+        self.auto_transmit_slot_no = 0
         self.lost_packet_count = 0
         self.t1 = datetime.now()
         self.t2 = None
@@ -61,6 +62,14 @@ class Dialog(QDialog):
         self.timer.setInterval(50)
         self.timer.timeout.connect(self.update_table)
         self.timer.start()
+
+        self.tmrAutoTransmit = QTimer()
+        self.tmrAutoTransmit.setInterval(50)
+        self.tmrAutoTransmit.timeout.connect(self.auto_transmit)
+        self.tmrAutoTransmit.start()
+
+
+
 
         # Trace Packets Tab ============================================================================================
         self.blnTraceSlot01 = False
@@ -715,6 +724,52 @@ class Dialog(QDialog):
                 self.tblRx.setItem(table_row, 12, QtWidgets.QTableWidgetItem(str(row[12])))  # Last Update
                 # print(row[0], row[1])
                 table_row += 1
+
+    def auto_transmit(self):
+        if self.auto_transmit_slot_no == 1:
+            self.send_slot_01()
+        elif self.auto_transmit_slot_no == 2:
+            self.send_slot_02()
+        elif self.auto_transmit_slot_no == 3:
+            self.send_slot_03()
+        elif self.auto_transmit_slot_no == 4:
+            self.send_slot_04()
+        elif self.auto_transmit_slot_no == 5:
+            self.send_slot_05()
+        elif self.auto_transmit_slot_no == 6:
+            self.send_slot_06()
+        elif self.auto_transmit_slot_no == 7:
+            self.send_slot_07()
+        elif self.auto_transmit_slot_no == 8:
+            self.send_slot_08()
+        elif self.auto_transmit_slot_no == 9:
+            self.send_slot_09()
+        elif self.auto_transmit_slot_no == 10:
+            self.send_slot_10()
+        elif self.auto_transmit_slot_no == 11:
+            self.send_slot_11()
+        elif self.auto_transmit_slot_no == 12:
+            self.send_slot_12()
+        elif self.auto_transmit_slot_no == 13:
+            self.send_slot_13()
+        elif self.auto_transmit_slot_no == 14:
+            self.send_slot_14()
+        elif self.auto_transmit_slot_no == 15:
+            self.send_slot_15()
+        elif self.auto_transmit_slot_no == 16:
+            self.send_slot_16()
+        elif self.auto_transmit_slot_no == 17:
+            self.send_slot_17()
+        elif self.auto_transmit_slot_no == 18:
+            self.send_slot_18()
+        elif self.auto_transmit_slot_no == 19:
+            self.send_slot_19()
+        elif self.auto_transmit_slot_no == 20:
+            self.send_slot_20()
+
+        self.auto_transmit_slot_no = 0
+
+
 
     def start_logging(self):
         if int(self.leLogCount.text()) > 0:
@@ -2331,6 +2386,7 @@ class Dialog(QDialog):
                          sHexD6.upper(),
                          sHexD7.upper(),
                          "100")
+        self.auto_transmit_slot_no = self.cmbTpmsSlot.currentIndex() + 1
 
     def btn_cbm_ems_info8_click_handler(self):
         sD0 = ""
@@ -2479,6 +2535,7 @@ class Dialog(QDialog):
                          sHexD6.upper(),
                          sHexD7.upper(),
                          "100")
+        self.auto_transmit_slot_no = self.cmbCbmEmsInfo8Slot.currentIndex() + 1
 
     def btn_high_speed_info3_click_handler(self):
         sD0 = ""
@@ -2919,6 +2976,7 @@ class Dialog(QDialog):
                          sHexD6.upper(),
                          sHexD7.upper(),
                          "100")
+        self.auto_transmit_slot_no = self.cmbCbmHighSpeedInfo3Slot.currentIndex() + 1
 
     def btn_cbm_body_network_click_handler(self):
         sD0 = ""
@@ -3065,6 +3123,7 @@ class Dialog(QDialog):
                          sHexD6.upper(),
                          sHexD7.upper(),
                          "100")
+        self.auto_transmit_slot_no = self.cmbBodyNetworkManagementSlot.currentIndex() + 1
 
     def btn_fam_info_click_handler(self):
         BatteryChargeWarning = ""
@@ -3166,6 +3225,7 @@ class Dialog(QDialog):
                          sHexD6.upper(),
                          sHexD7.upper(),
                          "100")
+        self.auto_transmit_slot_no = self.cmbFAMInformation.currentIndex() + 1
 
     def dial_speed_wheel_value_change_handler(self):
         getValue = self.dialWheelSpeed.value()
