@@ -28,8 +28,11 @@ class Dialog(QDialog):
         self.bind_controls()
         self.counter = 0
         self.messages = []
-        dialValue = self.dialWheelSpeed.value()
-        self.leWheelSpeed.setText(str(dialValue))
+
+        self.leWheelSpeed.setText(str(self.dialWheelSpeed.value()))
+        self.leEngineSpeed.setText(str(self.dialEngineSpeed.value()))
+        self.leTCO.setText(str(self.dialTCO.value()))
+        self.leVehicleSpeed.setText(str(self.dialVehicleSpeed.value()))
 
         # Connections tab ==============================================================================================
         self.rxSerialPort = None
@@ -495,6 +498,10 @@ class Dialog(QDialog):
         self.btnSetFAMInformationSlot.clicked.connect(self.btn_fam_info_click_handler)
         self.dialWheelSpeed.valueChanged.connect(self.dial_speed_wheel_value_change_handler)
         self.btnSetABSInformationSlot.clicked.connect(self.btn_ABS_information_click_handler)
+        self.btnSetCBMEngineInfoSlot.clicked.connect(self.btn_cbm_engine_info6_click_handler)
+        self.dialEngineSpeed.valueChanged.connect(self.dial_engine_speed_value_changed_handler)
+        self.dialTCO.valueChanged.connect(self.dial_tco_value_changed_handler)
+        self.dialVehicleSpeed.valueChanged.connect(self.dial_vehicle_speed_value_changed_handler)
 
 
 
@@ -3365,6 +3372,160 @@ class Dialog(QDialog):
                          "100")
         if self.chkAutoTransmit.isChecked():
             self.auto_transmit_slot_no = self.cmbABSInformation.currentIndex() + 1
+
+    def dial_engine_speed_value_changed_handler(self):
+        getValue = self.dialEngineSpeed.value()
+        self.leEngineSpeed.setText(str(getValue))
+
+    def dial_tco_value_changed_handler(self):
+        getValue = self.dialTCO.value()
+        self.leTCO.setText(str(getValue))
+
+    def dial_vehicle_speed_value_changed_handler(self):
+        getValue = self.dialVehicleSpeed.value()
+        self.leVehicleSpeed.setText(str(getValue))
+
+    def btn_cbm_engine_info6_click_handler(self):
+        sD0 = ""
+        sD1 = ""
+        sD2 = ""
+        sD3 = ""
+        sD4 = ""
+        sD5 = ""
+        sD6 = ""
+        sD7 = ""
+
+        sHexD0 = ""
+        sHexD1 = ""
+        sHexD2 = ""
+        sHexD3 = ""
+        sHexD4 = ""
+        sHexD5 = ""
+        sHexD6 = ""
+        sHexD7 = ""
+        # --------------------------------------------------------
+        CheckEngine = ""                                            # [0.0]
+        if self.chkCheckEngine.isChecked():
+            CheckEngine = "1"
+        else:
+            CheckEngine = "0"
+        # --------------------------------------------------------
+        HotLampWarning = ""                                         # [0.1]
+        if self.chkHotLampWarning.isChecked():
+            HotLampWarning = "1"
+        else:
+            HotLampWarning= "0"
+        # --------------------------------------------------------
+        VehicleSpeedError = ""                                      # [0.2]
+        if self.chkVehicleSpeedError.isChecked():
+            VehicleSpeedError = "1"
+        else:
+            VehicleSpeedError = "0"
+        # --------------------------------------------------------
+        AirConditionrequest = ""                                    # [0.3]
+        if self.chkAirConditionrequest.isChecked():
+            AirConditionrequest = "1"
+        else:
+            AirConditionrequest = "0"
+        # --------------------------------------------------------
+        AirConditionPressureSwitch1 = ""                            # [0.4]
+        if self.chkAirConditionPressureSwitch1.isChecked():
+            AirConditionPressureSwitch1 = "1"
+        else:
+            AirConditionPressureSwitch1 = "0"
+        # --------------------------------------------------------
+        AirConditionPressureSwitch2 = ""                            # [0.5]
+        if self.chkAirConditionPressureSwitch2.isChecked():
+            AirConditionPressureSwitch2 = "1"
+        else:
+            AirConditionPressureSwitch2 = "0"
+        # --------------------------------------------------------
+        AirConditionCommand = ""                                    # [0.6]
+        if self.chkAirConditionCommand.isChecked():
+            AirConditionCommand = "1"
+        else:
+            AirConditionCommand = "0"
+        # --------------------------------------------------------
+        EOBDWarning = ""                                            # [0.7]
+        if self.chkEOBDWarnning.isChecked():
+            EOBDWarning = "1"
+        else:
+            EOBDWarning = "0"
+        # --------------------------------------------------------
+        sD0 = (EOBDWarning +
+               AirConditionCommand +
+               AirConditionPressureSwitch2 +
+               AirConditionPressureSwitch1 +
+               AirConditionrequest +
+               VehicleSpeedError +
+               HotLampWarning +
+               CheckEngine)
+
+        print(sD0)
+        sHexD0 = format(int(sD0, 2), '02x')
+        print("sHexD0", sHexD0)
+        # --------------------------------------------------------
+        RpmB1 = self.dialEngineSpeed.value() // 256
+        RpmB2 = self.dialEngineSpeed.value() % 256
+        print("RpmB1: ", RpmB1, " - RpmB1: ", RpmB2)
+        RpmB1Hex = hex(RpmB1)
+        RpmB1Hex = RpmB1Hex.upper()
+        RpmB2Hex = hex(RpmB2)
+        RpmB2Hex = RpmB2Hex.upper()
+        RpmB1Hex = RpmB1Hex[2:]
+        RpmB2Hex = RpmB2Hex[2:]
+        if len(RpmB1Hex) < 2:
+            RpmB1Hex = "0" + RpmB1Hex
+
+        if len(RpmB2Hex) < 2:
+            RpmB2Hex = "0" + RpmB2Hex
+
+        print("RpmB1Hex: ", RpmB1Hex)
+        print("RpmB2Hex: ", RpmB2Hex)
+
+        sHexD1 = RpmB2Hex
+        sHexD2 = RpmB1Hex
+        # --------------------------------------------------------
+        sHexD3 = "00"
+        sHexD4 = "00"
+        # --------------------------------------------------------
+        Tco = self.dialTCO.value()
+        TcoHex = hex(Tco)
+        TcoHex = TcoHex.upper()
+        TcoHex = TcoHex[2:]
+        if len(TcoHex) < 2:
+            TcoHex = "0" + TcoHex
+
+        print("TcoHex: ", TcoHex)
+        sHexD5 = TcoHex
+        # --------------------------------------------------------
+        VehicleSpeed = self.dialVehicleSpeed.value()
+        VehicleSpeedHex = hex(VehicleSpeed)
+        VehicleSpeedHex = VehicleSpeedHex.upper()
+        VehicleSpeedHex = VehicleSpeedHex[2:]
+        if len(VehicleSpeedHex) < 2:
+            VehicleSpeedHex = "0" + VehicleSpeedHex
+
+        print("VehicleSpeedHex: ", VehicleSpeedHex)
+        sHexD6 = VehicleSpeedHex
+        # --------------------------------------------------------
+        sHexD7 = "00"
+        # --------------------------------------------------------
+        self.set_tx_slot(str(self.cmbCbmEngineInfo6.currentIndex() + 1),
+                         "443",
+                         "8",
+                         sHexD0.upper(),
+                         sHexD1.upper(),
+                         sHexD2.upper(),
+                         sHexD3.upper(),
+                         sHexD4.upper(),
+                         sHexD5.upper(),
+                         sHexD6.upper(),
+                         sHexD7.upper(),
+                         "100")
+        if self.chkAutoTransmit.isChecked():
+            self.auto_transmit_slot_no = self.cmbCbmEngineInfo6.currentIndex() + 1
+
 
 
     def btn_reload_click_handler(self):
