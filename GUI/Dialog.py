@@ -2386,7 +2386,9 @@ class Dialog(QDialog):
                          sHexD6.upper(),
                          sHexD7.upper(),
                          "100")
-        self.auto_transmit_slot_no = self.cmbTpmsSlot.currentIndex() + 1
+
+        if self.chkAutoTransmit.isChecked():
+            self.auto_transmit_slot_no = self.cmbTpmsSlot.currentIndex() + 1
 
     def btn_cbm_ems_info8_click_handler(self):
         sD0 = ""
@@ -2535,7 +2537,9 @@ class Dialog(QDialog):
                          sHexD6.upper(),
                          sHexD7.upper(),
                          "100")
-        self.auto_transmit_slot_no = self.cmbCbmEmsInfo8Slot.currentIndex() + 1
+
+        if self.chkAutoTransmit.isChecked():
+            self.auto_transmit_slot_no = self.cmbCbmEmsInfo8Slot.currentIndex() + 1
 
     def btn_high_speed_info3_click_handler(self):
         sD0 = ""
@@ -2976,7 +2980,9 @@ class Dialog(QDialog):
                          sHexD6.upper(),
                          sHexD7.upper(),
                          "100")
-        self.auto_transmit_slot_no = self.cmbCbmHighSpeedInfo3Slot.currentIndex() + 1
+
+        if self.chkAutoTransmit.isChecked():
+            self.auto_transmit_slot_no = self.cmbCbmHighSpeedInfo3Slot.currentIndex() + 1
 
     def btn_cbm_body_network_click_handler(self):
         sD0 = ""
@@ -3123,7 +3129,8 @@ class Dialog(QDialog):
                          sHexD6.upper(),
                          sHexD7.upper(),
                          "100")
-        self.auto_transmit_slot_no = self.cmbBodyNetworkManagementSlot.currentIndex() + 1
+        if self.chkAutoTransmit.isChecked():
+            self.auto_transmit_slot_no = self.cmbBodyNetworkManagementSlot.currentIndex() + 1
 
     def btn_fam_info_click_handler(self):
         BatteryChargeWarning = ""
@@ -3225,7 +3232,9 @@ class Dialog(QDialog):
                          sHexD6.upper(),
                          sHexD7.upper(),
                          "100")
-        self.auto_transmit_slot_no = self.cmbFAMInformation.currentIndex() + 1
+
+        if self.chkAutoTransmit.isChecked():
+            self.auto_transmit_slot_no = self.cmbFAMInformation.currentIndex() + 1
 
     def dial_speed_wheel_value_change_handler(self):
         getValue = self.dialWheelSpeed.value()
@@ -3319,36 +3328,43 @@ class Dialog(QDialog):
         elif self.cmbESPWarning.currentIndex() == 2:            # Active
             ESPWarning = "10"
         # --------------------------------------------------------
-        SpeedWheelDec = self.dialWheelSpeed.value()
-        SpeedWheelHex = hex(SpeedWheelDec)
-        print(SpeedWheelDec, SpeedWheelHex, type(SpeedWheelHex))
-        StripedSpeedWheelHex = SpeedWheelHex[2:]
-        print("Striped Hex", StripedSpeedWheelHex)
-        CleanHex = ""
-        if len(StripedSpeedWheelHex) == 0:
-            CleanHex = "000"
-        elif len(StripedSpeedWheelHex) == 1:
-            CleanHex = "00" + StripedSpeedWheelHex
-        elif len(StripedSpeedWheelHex) == 2:
-            CleanHex = "0" + StripedSpeedWheelHex
+        sD1 = ("00000" +
+                ESPWarning +
+                ESPSwitch)
+
+        print(sD1)
+        sHexD1 = format(int(sD1, 2), '02x')
+        print("sHexD1", sHexD1)
+        # --------------------------------------------------------
+        SpeedWheelDec = self.dialWheelSpeed.value() * 11
+        SpeedWheelHex = ""
+        if SpeedWheelDec == 0:
+            SpeedWheelHex = "00"
         else:
-            CleanHex = StripedSpeedWheelHex
+            SpeedWheelHex = str(SpeedWheelDec)
 
-        CleanHexCapital = CleanHex.upper()
-        print("Clean Capital Hex", CleanHexCapital)
-
-        FourWheelSpeed = CleanHexCapital + CleanHexCapital + CleanHexCapital + CleanHexCapital
-        print("Four Wheel Speed: ", FourWheelSpeed)
-        sHexD7 = FourWheelSpeed[0:2]
-        print("sHexD7", sHexD7)
-        sHexD6 = FourWheelSpeed[3:5]
-        print("sHexD6", sHexD6)
-        sHexD5 = FourWheelSpeed[6:8]
-        print("sHexD5", sHexD5)
-        sHexD4 = FourWheelSpeed[9:11]
-        print("sHexD4", sHexD4)
-
-
+        print("SpeedWheelHex", SpeedWheelHex)
+        sHexD2 = SpeedWheelHex
+        sHexD3 = SpeedWheelHex
+        sHexD4 = SpeedWheelHex
+        sHexD5 = SpeedWheelHex
+        sHexD6 = SpeedWheelHex
+        sHexD7 = SpeedWheelHex
+        # --------------------------------------------------------
+        self.set_tx_slot(str(self.cmbABSInformation.currentIndex() + 1),
+                         "405",
+                         "8",
+                         sHexD0.upper(),
+                         sHexD1.upper(),
+                         sHexD2.upper(),
+                         sHexD3.upper(),
+                         sHexD4.upper(),
+                         sHexD5.upper(),
+                         sHexD6.upper(),
+                         sHexD7.upper(),
+                         "100")
+        if self.chkAutoTransmit.isChecked():
+            self.auto_transmit_slot_no = self.cmbABSInformation.currentIndex() + 1
 
 
     def btn_reload_click_handler(self):

@@ -29,7 +29,7 @@
     <string notr="true"/>
    </property>
    <property name="currentIndex">
-    <number>4</number>
+    <number>6</number>
    </property>
    <widget class="QWidget" name="tab_connection">
     <attribute name="title">
@@ -9337,7 +9337,7 @@
       <set>Qt::AlignCenter</set>
      </property>
     </widget>
-    <widget class="QCheckBox" name="chkAutoUpdate">
+    <widget class="QCheckBox" name="chkAutoTransmit">
      <property name="geometry">
       <rect>
        <x>660</x>
@@ -9347,7 +9347,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>Auto Update</string>
+      <string>Auto Transmit</string>
      </property>
     </widget>
    </widget>
@@ -11938,7 +11938,7 @@
        </rect>
       </property>
       <property name="maximum">
-       <number>4093</number>
+       <number>7</number>
       </property>
      </widget>
      <widget class="QLabel" name="label_76">
