@@ -24,10 +24,12 @@ class Dialog(QDialog):
         self.period = None
 
         loadUi('Dialog.ui', self)
-
+        self.LookUp = []
+        self.load_lookup()
         self.bind_controls()
         self.counter = 0
         self.messages = []
+
 
         self.leWheelSpeed.setText(str(self.dialWheelSpeed.value()))
         self.leEngineSpeed.setText(str(self.dialEngineSpeed.value()))
@@ -634,14 +636,14 @@ class Dialog(QDialog):
 
             can_id = str(data[0][1:])
             dlc = str(data[1])
-            d0 = str(data[2])
-            d1 = str(data[3])
-            d2 = str(data[4])
-            d3 = str(data[5])
-            d4 = str(data[6])
-            d5 = str(data[7])
-            d6 = str(data[8])
-            d7 = str(data[9])
+            d0 = "0" + str(data[2]) if len(str(data[2])) < 2 else str(data[2])
+            d1 = "0" + str(data[3]) if len(str(data[3])) < 2 else str(data[3])
+            d2 = "0" + str(data[4]) if len(str(data[4])) < 2 else str(data[4])
+            d3 = "0" + str(data[5]) if len(str(data[5])) < 2 else str(data[5])
+            d4 = "0" + str(data[6]) if len(str(data[6])) < 2 else str(data[6])
+            d5 = "0" + str(data[7]) if len(str(data[7])) < 2 else str(data[7])
+            d6 = "0" + str(data[8]) if len(str(data[8])) < 2 else str(data[8])
+            d7 = "0" + str(data[9]) if len(str(data[9])) < 2 else str(data[9])
             micros = str(data[10])
 
             message = [can_id, dlc, d0, d1, d2, d3, d4, d5, d6, d7, "0", "0", micros]
@@ -3996,3 +3998,6 @@ class Dialog(QDialog):
 
         with open('ecu.ini', 'w') as configfile:
             self.config.write(configfile)
+
+    def load_lookup(self):
+        pass
