@@ -10,6 +10,7 @@ import csv
 import time
 from string import *
 import configparser
+from numpy.core.defchararray import *
 
 
 class Dialog(QDialog):
@@ -26,10 +27,10 @@ class Dialog(QDialog):
         loadUi('Dialog.ui', self)
         self.LookUp = []
         self.load_lookup()
+        self.extract_message("40F", "30", "28", "7D", "4E", "00", "00", "00", "00")
         self.bind_controls()
         self.counter = 0
         self.messages = []
-
 
         self.leWheelSpeed.setText(str(self.dialWheelSpeed.value()))
         self.leEngineSpeed.setText(str(self.dialEngineSpeed.value()))
@@ -72,9 +73,6 @@ class Dialog(QDialog):
         self.tmrAutoTransmit.setInterval(50)
         self.tmrAutoTransmit.timeout.connect(self.auto_transmit)
         self.tmrAutoTransmit.start()
-
-
-
 
         # Trace Packets Tab ============================================================================================
         self.blnTraceSlot01 = False
@@ -505,9 +503,6 @@ class Dialog(QDialog):
         self.dialTCO.valueChanged.connect(self.dial_tco_value_changed_handler)
         self.dialVehicleSpeed.valueChanged.connect(self.dial_vehicle_speed_value_changed_handler)
 
-
-
-
     def open_rx_serial_port(self):
         if not self.rxSerialDeviceIsConnected:
             self.rxSerialPort.setPortName(self.cmbRxPortNames.currentText())
@@ -777,8 +772,6 @@ class Dialog(QDialog):
             self.send_slot_20()
 
         self.auto_transmit_slot_no = 0
-
-
 
     def start_logging(self):
         if int(self.leLogCount.text()) > 0:
@@ -2892,31 +2885,31 @@ class Dialog(QDialog):
         sHexD5 = format(int(sD5, 2), '02x')
         print("sHexD5", sHexD5)
         # --------------------------------------------------------
-        LHWindowSwitchStatus = ""                                   # [6.0~6.1]
-        if self.cmbLHWindowSwitchStatus.currentIndex() == 0:        # Off
+        LHWindowSwitchStatus = ""  # [6.0~6.1]
+        if self.cmbLHWindowSwitchStatus.currentIndex() == 0:  # Off
             print("LH Window Switch Status: Off")
             LHWindowSwitchStatus = "00"
-        elif self.cmbLHWindowSwitchStatus.currentIndex() == 1:      # Up
+        elif self.cmbLHWindowSwitchStatus.currentIndex() == 1:  # Up
             print("LH Window Switch Status: Up")
             LHWindowSwitchStatus = "01"
-        elif self.cmbLHWindowSwitchStatus.currentIndex() == 2:      # Down
+        elif self.cmbLHWindowSwitchStatus.currentIndex() == 2:  # Down
             print("LH Window Switch Status: Down")
             LHWindowSwitchStatus = "10"
-        elif self.cmbLHWindowSwitchStatus.currentIndex() == 3:      # Error
+        elif self.cmbLHWindowSwitchStatus.currentIndex() == 3:  # Error
             print("LH Window Switch Status: Error")
             LHWindowSwitchStatus = "11"
         # --------------------------------------------------------
-        RHWindowSwitchStatus = ""                                   # [6.2~6.3]
-        if self.cmbRHWindowSwitchStatus.currentIndex() == 0:        # Off
+        RHWindowSwitchStatus = ""  # [6.2~6.3]
+        if self.cmbRHWindowSwitchStatus.currentIndex() == 0:  # Off
             print("RH Window Switch Status: Off")
             RHWindowSwitchStatus = "00"
-        elif self.cmbRHWindowSwitchStatus.currentIndex() == 1:      # Up
+        elif self.cmbRHWindowSwitchStatus.currentIndex() == 1:  # Up
             print("RH Window Switch Status: Up")
             RHWindowSwitchStatus = "01"
-        elif self.cmbRHWindowSwitchStatus.currentIndex() == 2:      # Down
+        elif self.cmbRHWindowSwitchStatus.currentIndex() == 2:  # Down
             print("RH Window Switch Status: Down")
             RHWindowSwitchStatus = "10"
-        elif self.cmbRHWindowSwitchStatus.currentIndex() == 3:      # Error
+        elif self.cmbRHWindowSwitchStatus.currentIndex() == 3:  # Error
             print("RH Window Switch Status: Error")
             RHWindowSwitchStatus = "11"
         # --------------------------------------------------------
@@ -2926,45 +2919,45 @@ class Dialog(QDialog):
         print("sHexD6", sHexD6)
         # --------------------------------------------------------
         HazardSwitchStatus = "0"
-        if self.chkHazardSwitchStatus.isChecked():                  # [7.0]
+        if self.chkHazardSwitchStatus.isChecked():  # [7.0]
             HazardSwitchStatus = "1"
         else:
             HazardSwitchStatus = "0"
         # --------------------------------------------------------
         TrunkLidCommandSwitchStatus = "0"
-        if self.chkTrunkLidCommandSwitchStatus.isChecked():         #[7.1]
+        if self.chkTrunkLidCommandSwitchStatus.isChecked():  # [7.1]
             TrunkLidCommandSwitchStatus = "1"
         else:
             TrunkLidCommandSwitchStatus = "0"
         # --------------------------------------------------------
-        IndicatorLampCommand = ""                                   #[7.2~7.3]
-        if self.cmbIndicatorLampCommand.currentIndex() == 0:        # Off
+        IndicatorLampCommand = ""  # [7.2~7.3]
+        if self.cmbIndicatorLampCommand.currentIndex() == 0:  # Off
             print("Indicator Lamp command: Off")
             IndicatorLampCommand = "00"
-        elif self.cmbIndicatorLampCommand.currentIndex() == 1:      # LH ON
+        elif self.cmbIndicatorLampCommand.currentIndex() == 1:  # LH ON
             print("Indicator Lamp command: LH ON")
             IndicatorLampCommand = "10"
-        elif self.cmbIndicatorLampCommand.currentIndex() == 2:      # RH ON
+        elif self.cmbIndicatorLampCommand.currentIndex() == 2:  # RH ON
             print("Indicator Lamp command: RH ON")
             IndicatorLampCommand = "01"
-        elif self.cmbIndicatorLampCommand.currentIndex() == 3:      # LH & RH ON
+        elif self.cmbIndicatorLampCommand.currentIndex() == 3:  # LH & RH ON
             print("Indicator Lamp command: LH & RH ON")
             IndicatorLampCommand = "11"
         # --------------------------------------------------------
         ShockSensorCommand = "0"
-        if self.chkShockSensorCommand.isChecked():                  # [7.4]
+        if self.chkShockSensorCommand.isChecked():  # [7.4]
             ShockSensorCommand = "1"
         else:
             ShockSensorCommand = "0"
         # --------------------------------------------------------
-        AntiTheftstatus = ""                                        #[7.5~7.6]
-        if self.cmbAntiTheftstatus.currentIndex() == 0:             # Inactive
+        AntiTheftstatus = ""  # [7.5~7.6]
+        if self.cmbAntiTheftstatus.currentIndex() == 0:  # Inactive
             AntiTheftstatus = "00"
-        elif self.cmbAntiTheftstatus.currentIndex() == 1:           # Active
+        elif self.cmbAntiTheftstatus.currentIndex() == 1:  # Active
             AntiTheftstatus = "01"
-        elif self.cmbAntiTheftstatus.currentIndex() == 2:           # Alarm
+        elif self.cmbAntiTheftstatus.currentIndex() == 2:  # Alarm
             AntiTheftstatus = "10"
-        elif self.cmbAntiTheftstatus.currentIndex() == 3:           # Pause Alarm
+        elif self.cmbAntiTheftstatus.currentIndex() == 3:  # Pause Alarm
             AntiTheftstatus = "11"
         # --------------------------------------------------------
         sD7 = ("0" +
@@ -3013,77 +3006,77 @@ class Dialog(QDialog):
         sHexD7 = ""
 
         # --------------------------------------------------------
-        BodyNetworkManagement = ""                                  # [0.0~0.2]
-        if self.cmbBodyNetworkManagement.currentIndex() == 0:       # Sleep
+        BodyNetworkManagement = ""  # [0.0~0.2]
+        if self.cmbBodyNetworkManagement.currentIndex() == 0:  # Sleep
             BodyNetworkManagement = "000"
-        elif self.cmbBodyNetworkManagement.currentIndex() == 1:     # Normal
+        elif self.cmbBodyNetworkManagement.currentIndex() == 1:  # Normal
             BodyNetworkManagement = "001"
-        elif self.cmbBodyNetworkManagement.currentIndex() == 2:     # Go To Sleep
+        elif self.cmbBodyNetworkManagement.currentIndex() == 2:  # Go To Sleep
             BodyNetworkManagement = "010"
-        elif self.cmbBodyNetworkManagement.currentIndex() == 3:     # Wakeup
+        elif self.cmbBodyNetworkManagement.currentIndex() == 3:  # Wakeup
             BodyNetworkManagement = "011"
-        elif self.cmbBodyNetworkManagement.currentIndex() == 4:     # COM OFF
+        elif self.cmbBodyNetworkManagement.currentIndex() == 4:  # COM OFF
             BodyNetworkManagement = "100"
-        elif self.cmbBodyNetworkManagement.currentIndex() == 5:     # Not Available
+        elif self.cmbBodyNetworkManagement.currentIndex() == 5:  # Not Available
             BodyNetworkManagement = "111"
 
-        SupervisionState = ""                                       # [0.3]
-        if self.cmbSupervisionState.currentIndex() == 0:            # Off
+        SupervisionState = ""  # [0.3]
+        if self.cmbSupervisionState.currentIndex() == 0:  # Off
             SupervisionState = "0"
-        elif self.cmbSupervisionState.currentIndex() == 1:          # Ready
+        elif self.cmbSupervisionState.currentIndex() == 1:  # Ready
             SupervisionState = "1"
         # --------------------------------------------------------
         sD0 = ("0000" +
-                SupervisionState +
-                BodyNetworkManagement)
+               SupervisionState +
+               BodyNetworkManagement)
 
         print(sD0)
         sHexD0 = format(int(sD0, 2), '02x')
         print("sHexD0", sHexD0)
         # --------------------------------------------------------
         ABSIsAbsent = ""
-        if self.chkAbsIsAbsent.isChecked():                         # [1.0]
+        if self.chkAbsIsAbsent.isChecked():  # [1.0]
             ABSIsAbsent = "1"
         else:
             ABSIsAbsent = "0"
         # --------------------------------------------------------
-        CBMIsAbsent = ""                                            # [1.1]
+        CBMIsAbsent = ""  # [1.1]
         if self.chkCBMIsAbsent.isChecked():
             CBMIsAbsent = "1"
         else:
             CBMIsAbsent = "0"
         # --------------------------------------------------------
-        EMSIsAbsent = ""                                            #[1.2]
+        EMSIsAbsent = ""  # [1.2]
         if self.chkEMSIsAbsent.isChecked():
             EMSIsAbsent = "1"
         else:
             EMSIsAbsent = "0"
         # --------------------------------------------------------
-        EPASIsAbsent = ""                                           #[1.3]
+        EPASIsAbsent = ""  # [1.3]
         if self.chkEPASIsAbsent.isChecked():
             EPASIsAbsent = "1"
         else:
             EPASIsAbsent = "0"
         # --------------------------------------------------------
-        SASIsAbsent = ""                                            #[1.4]
+        SASIsAbsent = ""  # [1.4]
         if self.chkSASIsAbsent.isChecked():
             SASIsAbsent = "1"
         else:
             SASIsAbsent = "0"
         # --------------------------------------------------------
-        TCUIsAbsent = ""                                            #[1.5]
+        TCUIsAbsent = ""  # [1.5]
         if self.chkTCUIsAbsent.isChecked():
             TCUIsAbsent = "1"
         else:
             TCUIsAbsent = "0"
         # --------------------------------------------------------
-        ClusterIsAbsent = ""                                        #[1.6]
+        ClusterIsAbsent = ""  # [1.6]
         if self.chkClusterIsAbsent.isChecked():
             ClusterIsAbsent = "1"
         else:
             ClusterIsAbsent = "0"
         # --------------------------------------------------------
-        ICUIsAbsent = ""                                            #[1.7]
+        ICUIsAbsent = ""  # [1.7]
         if self.chkICUIsAbsent.isChecked():
             ICUIsAbsent = "1"
         else:
@@ -3143,25 +3136,25 @@ class Dialog(QDialog):
 
     def btn_fam_info_click_handler(self):
         BatteryChargeWarning = ""
-        if self.chkBatteryChargeWarning.isChecked():            # [0.0]
+        if self.chkBatteryChargeWarning.isChecked():  # [0.0]
             BatteryChargeWarning = "1"
         else:
             BatteryChargeWarning = "0"
         # --------------------------------------------------------
         EngineOilPressure = ""
-        if self.chkEngineOilPressureWarning.isChecked():        # [0.2]
+        if self.chkEngineOilPressureWarning.isChecked():  # [0.2]
             EngineOilPressure = "1"
         else:
             EngineOilPressure = "0"
         # --------------------------------------------------------
         BrakePadWarning = ""
-        if self.BrakePadWarning.isChecked():                    # [0.5]
+        if self.BrakePadWarning.isChecked():  # [0.5]
             BrakePadWarning = "1"
         else:
             BrakePadWarning = "0"
         # --------------------------------------------------------
         BrakeOilLevelWarning = ""
-        if self.chkBrakeOilLevelWarning.isChecked():            # [0.6]
+        if self.chkBrakeOilLevelWarning.isChecked():  # [0.6]
             BrakeOilLevelWarning = "1"
         else:
             BrakeOilLevelWarning = "0"
@@ -3171,7 +3164,7 @@ class Dialog(QDialog):
                BrakePadWarning +
                "00" +
                EngineOilPressure +
-                "0" +
+               "0" +
                BatteryChargeWarning)
 
         print(sD0)
@@ -3179,19 +3172,19 @@ class Dialog(QDialog):
         print("sHexD0", sHexD0)
         # --------------------------------------------------------
         ReverseGearSwitchStatus = ""
-        if self.chkReverseGearSwitchStatus.isChecked():         # [1.0]
+        if self.chkReverseGearSwitchStatus.isChecked():  # [1.0]
             ReverseGearSwitchStatus = "1"
         else:
             ReverseGearSwitchStatus = "0"
         # --------------------------------------------------------
         WiperZeroPositionSwitchStatus = ""
-        if self.chkWiperZeroPositionStatus.isChecked():         # [1.1]
+        if self.chkWiperZeroPositionStatus.isChecked():  # [1.1]
             WiperZeroPositionSwitchStatus = "1"
         else:
             WiperZeroPositionSwitchStatus = "0"
         # --------------------------------------------------------
         AcCompressorClutchStatus = ""
-        if self.chkAcCompressorClutchStatus.isChecked():        # [1.2]
+        if self.chkAcCompressorClutchStatus.isChecked():  # [1.2]
             AcCompressorClutchStatus = "1"
         else:
             AcCompressorClutchStatus = "0"
@@ -3269,43 +3262,43 @@ class Dialog(QDialog):
         sHexD7 = ""
         # --------------------------------------------------------
         ABSError = ""
-        if self.chkABSError.isChecked():                # [0.0]
+        if self.chkABSError.isChecked():  # [0.0]
             ABSError = "1"
         else:
             ABSError = "0"
         # --------------------------------------------------------
         EBDError = ""
-        if self.chkEBDError.isChecked():                # [0.1]
+        if self.chkEBDError.isChecked():  # [0.1]
             EBDError = "1"
         else:
             EBDError = "0"
         # --------------------------------------------------------
         ABSActive = ""
-        if self.chkABSActive.isChecked():               # [0.2]
+        if self.chkABSActive.isChecked():  # [0.2]
             ABSActive = "1"
         else:
             ABSActive = "0"
         # --------------------------------------------------------
         ABSWarning = ""
-        if self.chkABSWarning.isChecked():              # [0.3]
+        if self.chkABSWarning.isChecked():  # [0.3]
             ABSWarning = "1"
         else:
             ABSWarning = "0"
         # --------------------------------------------------------
         EBDWarning = ""
-        if self.chkEBDWarning.isChecked():              # [0.4]
+        if self.chkEBDWarning.isChecked():  # [0.4]
             EBDWarning = "1"
         else:
             EBDWarning = "0"
         # --------------------------------------------------------
         ABSDiag = ""
-        if self.chkABSDiag.isChecked():                 # [0.5]
+        if self.chkABSDiag.isChecked():  # [0.5]
             ABSDiag = "1"
         else:
             ABSDiag = "0"
         # --------------------------------------------------------
         EBDActive = ""
-        if self.chkEBDActive.isChecked():               # [0.6]
+        if self.chkEBDActive.isChecked():  # [0.6]
             EBDActive = "1"
         else:
             EBDActive = "0"
@@ -3324,22 +3317,22 @@ class Dialog(QDialog):
         print("sHexD0", sHexD0)
         # --------------------------------------------------------
         ESPSwitch = ""
-        if self.chkESPSwitch.isChecked():                   # [1.0]
+        if self.chkESPSwitch.isChecked():  # [1.0]
             ESPSwitch = "1"
         else:
             ESPSwitch = "0"
         # --------------------------------------------------------
-        ESPWarning = ""                                         # [1.1~1.2]
-        if self.cmbESPWarning.currentIndex() == 0:              # No Warning
+        ESPWarning = ""  # [1.1~1.2]
+        if self.cmbESPWarning.currentIndex() == 0:  # No Warning
             ESPWarning = "00"
-        elif self.cmbESPWarning.currentIndex() == 1:            # Warning
+        elif self.cmbESPWarning.currentIndex() == 1:  # Warning
             ESPWarning = "01"
-        elif self.cmbESPWarning.currentIndex() == 2:            # Active
+        elif self.cmbESPWarning.currentIndex() == 2:  # Active
             ESPWarning = "10"
         # --------------------------------------------------------
         sD1 = ("00000" +
-                ESPWarning +
-                ESPSwitch)
+               ESPWarning +
+               ESPSwitch)
 
         print(sD1)
         sHexD1 = format(int(sD1, 2), '02x')
@@ -3406,49 +3399,49 @@ class Dialog(QDialog):
         sHexD6 = ""
         sHexD7 = ""
         # --------------------------------------------------------
-        CheckEngine = ""                                            # [0.0]
+        CheckEngine = ""  # [0.0]
         if self.chkCheckEngine.isChecked():
             CheckEngine = "1"
         else:
             CheckEngine = "0"
         # --------------------------------------------------------
-        HotLampWarning = ""                                         # [0.1]
+        HotLampWarning = ""  # [0.1]
         if self.chkHotLampWarning.isChecked():
             HotLampWarning = "1"
         else:
-            HotLampWarning= "0"
+            HotLampWarning = "0"
         # --------------------------------------------------------
-        VehicleSpeedError = ""                                      # [0.2]
+        VehicleSpeedError = ""  # [0.2]
         if self.chkVehicleSpeedError.isChecked():
             VehicleSpeedError = "1"
         else:
             VehicleSpeedError = "0"
         # --------------------------------------------------------
-        AirConditionrequest = ""                                    # [0.3]
+        AirConditionrequest = ""  # [0.3]
         if self.chkAirConditionrequest.isChecked():
             AirConditionrequest = "1"
         else:
             AirConditionrequest = "0"
         # --------------------------------------------------------
-        AirConditionPressureSwitch1 = ""                            # [0.4]
+        AirConditionPressureSwitch1 = ""  # [0.4]
         if self.chkAirConditionPressureSwitch1.isChecked():
             AirConditionPressureSwitch1 = "1"
         else:
             AirConditionPressureSwitch1 = "0"
         # --------------------------------------------------------
-        AirConditionPressureSwitch2 = ""                            # [0.5]
+        AirConditionPressureSwitch2 = ""  # [0.5]
         if self.chkAirConditionPressureSwitch2.isChecked():
             AirConditionPressureSwitch2 = "1"
         else:
             AirConditionPressureSwitch2 = "0"
         # --------------------------------------------------------
-        AirConditionCommand = ""                                    # [0.6]
+        AirConditionCommand = ""  # [0.6]
         if self.chkAirConditionCommand.isChecked():
             AirConditionCommand = "1"
         else:
             AirConditionCommand = "0"
         # --------------------------------------------------------
-        EOBDWarning = ""                                            # [0.7]
+        EOBDWarning = ""  # [0.7]
         if self.chkEOBDWarnning.isChecked():
             EOBDWarning = "1"
         else:
@@ -3527,8 +3520,6 @@ class Dialog(QDialog):
                          "100")
         if self.chkAutoTransmit.isChecked():
             self.auto_transmit_slot_no = self.cmbCbmEngineInfo6.currentIndex() + 1
-
-
 
     def btn_reload_click_handler(self):
         self.config.read('ecu.ini')
@@ -4000,4 +3991,142 @@ class Dialog(QDialog):
             self.config.write(configfile)
 
     def load_lookup(self):
-        pass
+        # ID, Description, Start Byte, Start Bit, End Byte, End Bit, Type, Coficient, Operator, Unit, Value, Name
+        self.LookUp.append(["40F", "TPMS System Status", "0", "0", "0", "2", "option", "", "", "", "0", "Normal"])
+        self.LookUp.append(["40F", "TPMS System Status", "0", "0", "0", "2", "option", "", "", "", "1", "Reserved"])
+        self.LookUp.append(["40F", "TPMS System Status", "0", "0", "0", "2", "option", "", "", "", "2", "System Error"])
+        self.LookUp.append(["40F", "TPMS System Status", "0", "0", "0", "2", "option", "", "", "", "3", "Reserved"])
+        self.LookUp.append(["40F", "TPMS System Status", "0", "0", "0", "2", "option", "", "", "", "4", "Reserved"])
+        self.LookUp.append(["40F", "TPMS System Status", "0", "0", "0", "2", "option", "", "", "", "5", "Reserved"])
+        self.LookUp.append(["40F", "TPMS System Status", "0", "0", "0", "2", "option", "", "", "", "6", "Reserved"])
+        self.LookUp.append(["40F", "TPMS System Status", "0", "0", "0", "2", "option", "", "", "", "7", "Reserved"])
+
+        self.LookUp.append(["40F", "The ID of Tire", "0", "4", "0", "6", "option", "", "", "", "0", "Rear Right"])
+        self.LookUp.append(["40F", "The ID of Tire", "0", "4", "0", "6", "option", "", "", "", "1", "Front Right"])
+        self.LookUp.append(["40F", "The ID of Tire", "0", "4", "0", "6", "option", "", "", "", "2", "Rear Left"])
+        self.LookUp.append(["40F", "The ID of Tire", "0", "4", "0", "6", "option", "", "", "", "3", "Front Left"])
+        self.LookUp.append(["40F", "The ID of Tire", "0", "4", "0", "6", "option", "", "", "", "4", "Reserved"])
+        self.LookUp.append(["40F", "The ID of Tire", "0", "4", "0", "6", "option", "", "", "", "5", "Reserved"])
+        self.LookUp.append(["40F", "The ID of Tire", "0", "4", "0", "6", "option", "", "", "", "6", "Reserved"])
+        self.LookUp.append(["40F", "The ID of Tire", "0", "4", "0", "6", "option", "", "", "", "7", "Reserved"])
+
+        self.LookUp.append(["40F", "The Tire Information", "0", "7", "0", "7", "option", "", "", "", "0", "Normal"])
+        self.LookUp.append(["40F", "The Tire Information", "0", "7", "0", "7", "option", "", "", "", "1", "Abnormal"])
+
+        self.LookUp.append(["40F", "The Tire Leakage", "1", "0", "1", "1", "option", "", "", "", "0", "Normal"])
+        self.LookUp.append(["40F", "The Tire Leakage", "1", "0", "1", "1", "option", "", "", "", "1", "Quick Leak"])
+        self.LookUp.append(["40F", "The Tire Leakage", "1", "0", "1", "1", "option", "", "", "", "2", "Reserved"])
+        self.LookUp.append(["40F", "The Tire Leakage", "1", "0", "1", "1", "option", "", "", "", "3", "Reserved"])
+
+        self.LookUp.append(["40F", "The Tire Learning Status", "1", "2", "1", "3", "option", "", "", "", "0", "Not Learned"])
+        self.LookUp.append(["40F", "The Tire Learning Status", "1", "2", "1", "3", "option", "", "", "", "1", "Learning"])
+        self.LookUp.append(["40F", "The Tire Learning Status", "1", "2", "1", "3", "option", "", "", "", "2", "Learn Completed"])
+        self.LookUp.append(["40F", "The Tire Learning Status", "1", "2", "1", "3", "option", "", "", "", "3", "Learning Failure"])
+
+        self.LookUp.append(["40F", "The Tire Pressure Status", "1", "4", "1", "5", "option", "", "", "", "0", "Normal"])
+        self.LookUp.append(["40F", "The Tire Pressure Status", "1", "4", "1", "5", "option", "", "", "", "1", "Over Pressure"])
+        self.LookUp.append(["40F", "The Tire Pressure Status", "1", "4", "1", "5", "option", "", "", "", "2", "Under Pressure"])
+        self.LookUp.append(["40F", "The Tire Pressure Status", "1", "4", "1", "5", "option", "", "", "", "3", "Reserved"])
+
+        self.LookUp.append(["40F", "The Tire Temperature Status", "1", "6", "1", "7", "option", "", "", "", "0", "Normal"])
+        self.LookUp.append(["40F", "The Tire Temperature Status", "1", "6", "1", "7", "option", "", "", "", "1", "Reserved"])
+        self.LookUp.append(["40F", "The Tire Temperature Status", "1", "6", "1", "7", "option", "", "", "", "2", "High Temperature"])
+        self.LookUp.append(["40F", "The Tire Temperature Status", "1", "6", "1", "7", "option", "", "", "", "3", "Reserved"])
+
+        self.LookUp.append(["40F", "The Tire Pressure", "2", "0", "2", "7", "scalar", "1.3725", "*", " kPa", "", ""])
+
+        self.LookUp.append(["40F", "The Tire Temperature", "3", "0", "3", "7", "scalar", "40", "-", " C", "", ""])
+
+        self.LookUp.append(["40F", "The Tire Battery Power Status", "4", "0", "4", "7", "option", "", "", "", "0", "Normal"])
+        self.LookUp.append(["40F", "The Tire Battery Power Status", "4", "0", "4", "7", "option", "", "", "", "1", "Low Power"])
+        self.LookUp.append(["40F", "The Tire Battery Power Status", "4", "0", "4", "7", "option", "", "", "", "2", "Reserved"])
+        self.LookUp.append(["40F", "The Tire Battery Power Status", "4", "0", "4", "7", "option", "", "", "", "3", "Reserved"])
+
+        for i in range(int("0" + "7", 8), int("0" + "7", 8) + 1):
+            a = str(oct(i))
+            a = a[2:]
+            if len(a) < 2:
+                a = "0" + a
+            print(a[0:1], "-", a[1:2])
+
+    def extract_message(self, id, d0, d1, d2, d3, d4, d5, d6, d7):
+        D0Bin = (bin(int(d0, 16))[2:]).zfill(8)
+        D1Bin = (bin(int(d1, 16))[2:]).zfill(8)
+        D2Bin = (bin(int(d2, 16))[2:]).zfill(8)
+        D3Bin = (bin(int(d3, 16))[2:]).zfill(8)
+        D4Bin = (bin(int(d4, 16))[2:]).zfill(8)
+        D5Bin = (bin(int(d5, 16))[2:]).zfill(8)
+        D6Bin = (bin(int(d6, 16))[2:]).zfill(8)
+        D7Bin = (bin(int(d7, 16))[2:]).zfill(8)
+
+        ConcatenatedBin = D7Bin + D6Bin + D5Bin + D4Bin + D3Bin + D2Bin + D1Bin + D0Bin
+
+        # ConcatenatedBin = "7654321076543210765432107654321076543210765432107654321076543210"
+        print(ConcatenatedBin)
+
+        message = [[0, 0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0, 0]]
+
+        j = 0
+        k = -1
+        l = 0
+        for i in range(64, 0, -1):
+            j = i - 1
+            k = k + 1
+            if k > 7:
+                k = 0
+                l = l + 1
+
+            # print(l, k, j, i)
+            message[l][k] = ConcatenatedBin[j:i]  # filling the dataset with received message
+            print("D[{}][{}] = {}".format(l, k, message[l][k]))
+
+        print(message)
+
+        j = 0
+
+        print(self.LookUp)
+
+        for row in self.LookUp:
+            row_id = row[0]
+            if row_id == id:
+                description = row[1]
+                startByte = row[2]
+                startBit = row[3]
+                endByte = row[4]
+                endBit = row[5]
+                row_type = row[6]
+                coficient = row[7]
+                row_operator = row[8]
+                unit = row[9]
+                lookupValue = row[10]
+                row_name = row[11]
+
+
+                #print(startByte, startByte, endByte, endBit)
+
+                binValue = ""
+                for a in range(int(startByte + startBit, 8), int(endByte + endBit, 8) + 1):
+                    b = str(oct(a))
+                    b = b[2:]
+                    if len(b) < 2:
+                        b = "0" + b
+
+                    binValue = binValue + message[int(b[0:1])][int(b[1:2])]
+
+                decValue = int(binValue, 2)
+
+                if row_type == "option":
+                    if int(decValue) == int(lookupValue):
+                        print("message[{}][{}]= {} - {} - {} - Description= {}: {}".format(b[0:1], b[1:2], binValue, decValue, lookupValue ,  description, row_name))
+                        print("==================================================")
+                else:
+                    pass
+
+
