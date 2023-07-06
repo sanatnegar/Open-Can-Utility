@@ -17,6 +17,30 @@ class Dialog(QDialog):
     def __init__(self):
         super(Dialog, self).__init__()
 
+        self.old_ID = ""
+        self.old_D0 = ""
+        self.old_D1 = ""
+        self.old_D2 = ""
+        self.old_D3 = ""
+        self.old_D4 = ""
+        self.old_D5 = ""
+        self.old_D6 = ""
+        self.old_D7 = ""
+
+        self.new_ID = ""
+        self.new_D0 = ""
+        self.new_D1 = ""
+        self.new_D2 = ""
+        self.new_D3 = ""
+        self.new_D4 = ""
+        self.new_D5 = ""
+        self.new_D6 = ""
+        self.new_D7 = ""
+
+        self.current_row = -1
+        self.extraction_update = False
+
+
         self.auto_transmit_slot_no = 0
         self.lost_packet_count = 0
         self.t1 = datetime.now()
@@ -27,10 +51,12 @@ class Dialog(QDialog):
         loadUi('Dialog.ui', self)
         self.LookUp = []
         self.load_lookup()
-        self.extract_message("40F", "30", "28", "7D", "4E", "00", "00", "00", "00")
+        self.extract_message()
         self.bind_controls()
         self.counter = 0
         self.messages = []
+
+
 
         self.leWheelSpeed.setText(str(self.dialWheelSpeed.value()))
         self.leEngineSpeed.setText(str(self.dialEngineSpeed.value()))
@@ -73,6 +99,11 @@ class Dialog(QDialog):
         self.tmrAutoTransmit.setInterval(50)
         self.tmrAutoTransmit.timeout.connect(self.auto_transmit)
         self.tmrAutoTransmit.start()
+
+        self.tmrMessageExtractor = QTimer()
+        self.tmrMessageExtractor.setInterval(50)
+        self.tmrAutoTransmit.timeout.connect(self.extract_message)
+        self.tmrMessageExtractor.start()
 
         # Trace Packets Tab ============================================================================================
         self.blnTraceSlot01 = False
@@ -502,6 +533,7 @@ class Dialog(QDialog):
         self.dialEngineSpeed.valueChanged.connect(self.dial_engine_speed_value_changed_handler)
         self.dialTCO.valueChanged.connect(self.dial_tco_value_changed_handler)
         self.dialVehicleSpeed.valueChanged.connect(self.dial_vehicle_speed_value_changed_handler)
+        self.tblRx.cellClicked.connect(self.tbl_rx_cell_clicked_handler)
 
     def open_rx_serial_port(self):
         if not self.rxSerialDeviceIsConnected:
@@ -4018,29 +4050,44 @@ class Dialog(QDialog):
         self.LookUp.append(["40F", "The Tire Leakage", "1", "0", "1", "1", "option", "", "", "", "2", "Reserved"])
         self.LookUp.append(["40F", "The Tire Leakage", "1", "0", "1", "1", "option", "", "", "", "3", "Reserved"])
 
-        self.LookUp.append(["40F", "The Tire Learning Status", "1", "2", "1", "3", "option", "", "", "", "0", "Not Learned"])
-        self.LookUp.append(["40F", "The Tire Learning Status", "1", "2", "1", "3", "option", "", "", "", "1", "Learning"])
-        self.LookUp.append(["40F", "The Tire Learning Status", "1", "2", "1", "3", "option", "", "", "", "2", "Learn Completed"])
-        self.LookUp.append(["40F", "The Tire Learning Status", "1", "2", "1", "3", "option", "", "", "", "3", "Learning Failure"])
+        self.LookUp.append(
+            ["40F", "The Tire Learning Status", "1", "2", "1", "3", "option", "", "", "", "0", "Not Learned"])
+        self.LookUp.append(
+            ["40F", "The Tire Learning Status", "1", "2", "1", "3", "option", "", "", "", "1", "Learning"])
+        self.LookUp.append(
+            ["40F", "The Tire Learning Status", "1", "2", "1", "3", "option", "", "", "", "2", "Learn Completed"])
+        self.LookUp.append(
+            ["40F", "The Tire Learning Status", "1", "2", "1", "3", "option", "", "", "", "3", "Learning Failure"])
 
         self.LookUp.append(["40F", "The Tire Pressure Status", "1", "4", "1", "5", "option", "", "", "", "0", "Normal"])
-        self.LookUp.append(["40F", "The Tire Pressure Status", "1", "4", "1", "5", "option", "", "", "", "1", "Over Pressure"])
-        self.LookUp.append(["40F", "The Tire Pressure Status", "1", "4", "1", "5", "option", "", "", "", "2", "Under Pressure"])
-        self.LookUp.append(["40F", "The Tire Pressure Status", "1", "4", "1", "5", "option", "", "", "", "3", "Reserved"])
+        self.LookUp.append(
+            ["40F", "The Tire Pressure Status", "1", "4", "1", "5", "option", "", "", "", "1", "Over Pressure"])
+        self.LookUp.append(
+            ["40F", "The Tire Pressure Status", "1", "4", "1", "5", "option", "", "", "", "2", "Under Pressure"])
+        self.LookUp.append(
+            ["40F", "The Tire Pressure Status", "1", "4", "1", "5", "option", "", "", "", "3", "Reserved"])
 
-        self.LookUp.append(["40F", "The Tire Temperature Status", "1", "6", "1", "7", "option", "", "", "", "0", "Normal"])
-        self.LookUp.append(["40F", "The Tire Temperature Status", "1", "6", "1", "7", "option", "", "", "", "1", "Reserved"])
-        self.LookUp.append(["40F", "The Tire Temperature Status", "1", "6", "1", "7", "option", "", "", "", "2", "High Temperature"])
-        self.LookUp.append(["40F", "The Tire Temperature Status", "1", "6", "1", "7", "option", "", "", "", "3", "Reserved"])
+        self.LookUp.append(
+            ["40F", "The Tire Temperature Status", "1", "6", "1", "7", "option", "", "", "", "0", "Normal"])
+        self.LookUp.append(
+            ["40F", "The Tire Temperature Status", "1", "6", "1", "7", "option", "", "", "", "1", "Reserved"])
+        self.LookUp.append(
+            ["40F", "The Tire Temperature Status", "1", "6", "1", "7", "option", "", "", "", "2", "High Temperature"])
+        self.LookUp.append(
+            ["40F", "The Tire Temperature Status", "1", "6", "1", "7", "option", "", "", "", "3", "Reserved"])
 
         self.LookUp.append(["40F", "The Tire Pressure", "2", "0", "2", "7", "scalar", "1.3725", "*", " kPa", "", ""])
 
         self.LookUp.append(["40F", "The Tire Temperature", "3", "0", "3", "7", "scalar", "40", "-", " C", "", ""])
 
-        self.LookUp.append(["40F", "The Tire Battery Power Status", "4", "0", "4", "7", "option", "", "", "", "0", "Normal"])
-        self.LookUp.append(["40F", "The Tire Battery Power Status", "4", "0", "4", "7", "option", "", "", "", "1", "Low Power"])
-        self.LookUp.append(["40F", "The Tire Battery Power Status", "4", "0", "4", "7", "option", "", "", "", "2", "Reserved"])
-        self.LookUp.append(["40F", "The Tire Battery Power Status", "4", "0", "4", "7", "option", "", "", "", "3", "Reserved"])
+        self.LookUp.append(
+            ["40F", "The Tire Battery Power Status", "4", "0", "4", "7", "option", "", "", "", "0", "Normal"])
+        self.LookUp.append(
+            ["40F", "The Tire Battery Power Status", "4", "0", "4", "7", "option", "", "", "", "1", "Low Power"])
+        self.LookUp.append(
+            ["40F", "The Tire Battery Power Status", "4", "0", "4", "7", "option", "", "", "", "2", "Reserved"])
+        self.LookUp.append(
+            ["40F", "The Tire Battery Power Status", "4", "0", "4", "7", "option", "", "", "", "3", "Reserved"])
 
         for i in range(int("0" + "7", 8), int("0" + "7", 8) + 1):
             a = str(oct(i))
@@ -4049,84 +4096,153 @@ class Dialog(QDialog):
                 a = "0" + a
             print(a[0:1], "-", a[1:2])
 
-    def extract_message(self, id, d0, d1, d2, d3, d4, d5, d6, d7):
-        D0Bin = (bin(int(d0, 16))[2:]).zfill(8)
-        D1Bin = (bin(int(d1, 16))[2:]).zfill(8)
-        D2Bin = (bin(int(d2, 16))[2:]).zfill(8)
-        D3Bin = (bin(int(d3, 16))[2:]).zfill(8)
-        D4Bin = (bin(int(d4, 16))[2:]).zfill(8)
-        D5Bin = (bin(int(d5, 16))[2:]).zfill(8)
-        D6Bin = (bin(int(d6, 16))[2:]).zfill(8)
-        D7Bin = (bin(int(d7, 16))[2:]).zfill(8)
+    def extract_message(self):
+        extraction_result = ""
+        if (self.current_row > -1 and self.extraction_update == True):
+            if (self.new_ID != self.old_ID or
+                self.new_D0 != self.old_D0 or
+                self.new_D1 != self.old_D1 or
+                self.new_D2 != self.old_D2 or
+                self.new_D3 != self.old_D3 or
+                self.new_D4 != self.old_D4 or
+                self.new_D5 != self.old_D5 or
+                self.new_D6 != self.old_D6 or
+                self.new_D7 != self.old_D7):
 
-        ConcatenatedBin = D7Bin + D6Bin + D5Bin + D4Bin + D3Bin + D2Bin + D1Bin + D0Bin
-
-        # ConcatenatedBin = "7654321076543210765432107654321076543210765432107654321076543210"
-        print(ConcatenatedBin)
-
-        message = [[0, 0, 0, 0, 0, 0, 0, 0],
-                   [0, 0, 0, 0, 0, 0, 0, 0],
-                   [0, 0, 0, 0, 0, 0, 0, 0],
-                   [0, 0, 0, 0, 0, 0, 0, 0],
-                   [0, 0, 0, 0, 0, 0, 0, 0],
-                   [0, 0, 0, 0, 0, 0, 0, 0],
-                   [0, 0, 0, 0, 0, 0, 0, 0],
-                   [0, 0, 0, 0, 0, 0, 0, 0]]
-
-        j = 0
-        k = -1
-        l = 0
-        for i in range(64, 0, -1):
-            j = i - 1
-            k = k + 1
-            if k > 7:
-                k = 0
-                l = l + 1
-
-            # print(l, k, j, i)
-            message[l][k] = ConcatenatedBin[j:i]  # filling the dataset with received message
-            print("D[{}][{}] = {}".format(l, k, message[l][k]))
-
-        print(message)
-
-        j = 0
-
-        print(self.LookUp)
-
-        for row in self.LookUp:
-            row_id = row[0]
-            if row_id == id:
-                description = row[1]
-                startByte = row[2]
-                startBit = row[3]
-                endByte = row[4]
-                endBit = row[5]
-                row_type = row[6]
-                coficient = row[7]
-                row_operator = row[8]
-                unit = row[9]
-                lookupValue = row[10]
-                row_name = row[11]
+                print("New D0 is:", self.new_D0)
 
 
-                #print(startByte, startByte, endByte, endBit)
 
-                binValue = ""
-                for a in range(int(startByte + startBit, 8), int(endByte + endBit, 8) + 1):
-                    b = str(oct(a))
-                    b = b[2:]
-                    if len(b) < 2:
-                        b = "0" + b
+                D0Bin = (bin(int(self.new_D0, 16))[2:]).zfill(8)
+                D1Bin = (bin(int(self.new_D1, 16))[2:]).zfill(8)
+                D2Bin = (bin(int(self.new_D2, 16))[2:]).zfill(8)
+                D3Bin = (bin(int(self.new_D3, 16))[2:]).zfill(8)
+                D4Bin = (bin(int(self.new_D4, 16))[2:]).zfill(8)
+                D5Bin = (bin(int(self.new_D5, 16))[2:]).zfill(8)
+                D6Bin = (bin(int(self.new_D6, 16))[2:]).zfill(8)
+                D7Bin = (bin(int(self.new_D7, 16))[2:]).zfill(8)
 
-                    binValue = binValue + message[int(b[0:1])][int(b[1:2])]
+                ConcatenatedBin = D7Bin + D6Bin + D5Bin + D4Bin + D3Bin + D2Bin + D1Bin + D0Bin
 
-                decValue = int(binValue, 2)
+                # ConcatenatedBin = "7654321076543210765432107654321076543210765432107654321076543210"
+                print(ConcatenatedBin)
 
-                if row_type == "option":
-                    if int(decValue) == int(lookupValue):
-                        print("message[{}][{}]= {} - {} - {} - Description= {}: {}".format(b[0:1], b[1:2], binValue, decValue, lookupValue ,  description, row_name))
-                        print("==================================================")
-                else:
-                    pass
+                message = [[0, 0, 0, 0, 0, 0, 0, 0],
+                          [0, 0, 0, 0, 0, 0, 0, 0],
+                          [0, 0, 0, 0, 0, 0, 0, 0],
+                          [0, 0, 0, 0, 0, 0, 0, 0],
+                          [0, 0, 0, 0, 0, 0, 0, 0],
+                          [0, 0, 0, 0, 0, 0, 0, 0],
+                          [0, 0, 0, 0, 0, 0, 0, 0],
+                          [0, 0, 0, 0, 0, 0, 0, 0]]
+
+                j = 0
+                k = -1
+                l = 0
+                for i in range(64, 0, -1):
+                    j = i - 1
+                    k = k + 1
+                    if k > 7:
+                        k = 0
+                        l = l + 1
+
+                    # print(l, k, j, i)
+                    message[l][k] = ConcatenatedBin[j:i]  # filling the dataset with received message
+                    #print("D[{}][{}] = {}".format(l, k, message[l][k]))
 
 
+                print(message)
+
+                j = 0
+
+                #print(self.LookUp)
+
+                for row in self.LookUp:
+                    row_id = row[0]
+                    if row_id == self.new_ID:
+                        description = row[1]
+                        startByte = row[2]
+                        startBit = row[3]
+                        endByte = row[4]
+                        endBit = row[5]
+                        row_type = row[6]
+                        coficient = row[7]
+                        row_operator = row[8]
+                        unit = row[9]
+                        lookupValue = row[10]
+                        row_name = row[11]
+
+                        #print(startByte, startByte, endByte, endBit)
+
+                        binValue = ""
+                        for a in range(int(startByte + startBit, 8), int(endByte + endBit, 8) + 1):
+                            b = str(oct(a))
+                            b = b[2:]
+                            if len(b) < 2:
+                                b = "0" + b
+
+                            binValue = binValue + message[int(b[0:1])][int(b[1:2])]
+
+                        decValue = int(binValue, 2)
+
+                        scalarValue = 0
+
+                        if row_type == "option":
+                            if int(decValue) == int(lookupValue):
+                                #print("message[{}][{}]= {} - {} - {} - Description= {}: {}".format(b[0:1], b[1:2], binValue, decValue, lookupValue ,  description, row_name))
+                                #print("==================================================")
+                                print("{}: {}".format(description, row_name))
+                                extraction_result = extraction_result + "{}: {}({})\r\n".format(description, row_name, decValue)
+                        else:
+                            if row_operator == "+":
+                                scalarValue = int(decValue) + float(coficient)
+                            elif row_operator == "-":
+                                scalarValue = int(decValue) - float(coficient)
+                            elif row_operator == "*":
+                                scalarValue = int(decValue) * float(coficient)
+                            elif row_operator == "/":
+                                scalarValue = int(decValue) / float(coficient)
+
+                            print("{}: {} {}".format(row_name, str(scalarValue), unit))
+                            extraction_result = extraction_result + "{}: {} {}\r\n".format(description, str(scalarValue), unit)
+
+                self.teExtractionResults.setPlainText(extraction_result)
+                print("Message Changed")
+                self.old_ID = self.new_ID
+                self.old_D0 = self.new_D0
+                self.old_D1 = self.new_D1
+                self.old_D2 = self.new_D2
+                self.old_D3 = self.new_D3
+                self.old_D4 = self.new_D4
+                self.old_D5 = self.new_D5
+                self.old_D6 = self.new_D6
+                self.old_D7 = self.new_D7
+
+                self.extraction_update = False
+
+
+    def tbl_rx_cell_clicked_handler(self, row, col):
+        self.new_ID = self.tblRx.item(row, 0).text()
+        self.new_D0 = self.tblRx.item(row, 2).text()
+        self.new_D1 = self.tblRx.item(row, 3).text()
+        self.new_D2 = self.tblRx.item(row, 4).text()
+        self.new_D3 = self.tblRx.item(row, 5).text()
+        self.new_D4 = self.tblRx.item(row, 6).text()
+        self.new_D5 = self.tblRx.item(row, 7).text()
+        self.new_D6 = self.tblRx.item(row, 8).text()
+        self.new_D7 = self.tblRx.item(row, 9).text()
+
+        print(self.new_ID,
+              self.new_D0,
+              self.new_D1,
+              self.new_D2,
+              self.new_D3,
+              self.new_D4,
+              self.new_D5,
+              self.new_D6,
+              self.new_D7)
+
+        print(str(row), str(col))
+        self.current_row = int(row)
+        print("Current Row: ", str(row))
+        self.extraction_update = True

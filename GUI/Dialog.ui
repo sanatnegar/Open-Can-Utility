@@ -284,6 +284,19 @@
       </property>
      </column>
     </widget>
+    <widget class="QTextEdit" name="teExtractionResults">
+     <property name="geometry">
+      <rect>
+       <x>773</x>
+       <y>10</y>
+       <width>431</width>
+       <height>621</height>
+      </rect>
+     </property>
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+    </widget>
    </widget>
    <widget class="QWidget" name="tab_trace_packets">
     <attribute name="title">
