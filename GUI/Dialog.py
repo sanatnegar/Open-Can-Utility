@@ -58,6 +58,8 @@ class Dialog(QDialog):
 
 
 
+        self.leTirePressure.setText(str(self.dialTirePressure.value()))
+        self.leTireTemperature.setText(str(self.dialTireTemperature.value()))
         self.leWheelSpeed.setText(str(self.dialWheelSpeed.value()))
         self.leEngineSpeed.setText(str(self.dialEngineSpeed.value()))
         self.leTCO.setText(str(self.dialTCO.value()))
@@ -522,6 +524,8 @@ class Dialog(QDialog):
         self.btnReload.clicked.connect(self.btn_reload_click_handler)
         self.btnSave.clicked.connect(self.btn_save_click_handler)
         # ICN 8232
+        self.dialTirePressure.valueChanged.connect(self.dial_tpms_tire_pressure_value_changed_handler)
+        self.dialTireTemperature.valueChanged.connect(self.dial_tpms_tire_temperature_value_changed_handler)
         self.btnSetTpmsSlot.clicked.connect(self.btn_set_tpms_slot_handler)
         self.btnCbmEmsInfo8Slot.clicked.connect(self.btn_cbm_ems_info8_click_handler)
         self.btnHighSpeedInfo3Slot.clicked.connect(self.btn_high_speed_info3_click_handler)
@@ -534,6 +538,7 @@ class Dialog(QDialog):
         self.dialTCO.valueChanged.connect(self.dial_tco_value_changed_handler)
         self.dialVehicleSpeed.valueChanged.connect(self.dial_vehicle_speed_value_changed_handler)
         self.tblRx.cellClicked.connect(self.tbl_rx_cell_clicked_handler)
+
 
     def open_rx_serial_port(self):
         if not self.rxSerialDeviceIsConnected:
@@ -2269,6 +2274,29 @@ class Dialog(QDialog):
         self.leTxPeriod19.setText("")
         self.leTxPeriod20.setText("")
 
+    def dial_tpms_tire_pressure_value_changed_handler(self):
+        getValue = self.dialTirePressure.value()
+        tirePressure = int(getValue)
+        tirePressureHex = hex(tirePressure)
+        tirePressureHex = tirePressureHex.upper()
+        tirePressureHex = tirePressureHex[2:]
+        if len(tirePressureHex) < 2:
+            tirePressureHex = "0" + tirePressureHex
+
+        self.leTirePressure.setText(str(tirePressureHex))
+
+    def dial_tpms_tire_temperature_value_changed_handler(self):
+        getValue = self.dialTireTemperature.value()
+        tireTemperature = getValue
+        tireTemperatureHex = hex(tireTemperature)
+        tireTemperatureHex = tireTemperatureHex.upper()
+        tireTemperatureHex = tireTemperatureHex[2:]
+        if len(tireTemperatureHex) < 2:
+            tireTemperatureHex = "0" + tireTemperatureHex
+
+        self.leTireTemperature.setText(str(tireTemperatureHex))
+
+
     def btn_set_tpms_slot_handler(self):
         sD0 = ""
         sD1 = ""
@@ -2296,8 +2324,8 @@ class Dialog(QDialog):
         TpmsLearningStatus = ""
         TpmsTirePressureStatus = ""
         TpmsTireTempratureStatus = ""
-        TpmsTirePressure = "00000000"
-        TpmsTireTemprature = "00000000"
+        TpmsTirePressure = ""
+        TpmsTireTemprature = ""
         TpmsTireBatteryPowerStatus = ""
 
         print("current Index: ", str(self.cmbTpmsSystemStatus.currentIndex()))
@@ -2311,7 +2339,14 @@ class Dialog(QDialog):
             TpmsSystemStatus = "010"
         # --------------------------------------------------------
         # TPMS Tire ID
-        TpmsTireId = "000"  # Default Rear Right Tire
+        if self.cmbTireID.currentIndex() == 0:
+            TpmsTireId = "00"
+        elif self.cmbTireID.currentIndex() == 1:
+            TpmsTireId = "01"
+        elif self.cmbTireID.currentIndex() == 2:
+            TpmsTireId = "10"
+        elif self.cmbTireID.currentIndex() == 3:
+            TpmsTireId = "11"
         # --------------------------------------------------------
         # TPMS valid/invalid Info
         if self.cmbTireInformationSignal.currentIndex() == 0:
@@ -2365,13 +2400,16 @@ class Dialog(QDialog):
         elif self.cmbTireTempratureStatus.currentIndex() == 1:
             print("Tire temperature high")
             TpmsTireTempratureStatus = "10"
-
+        # --------------------------------------------------------
+        TpmsTirePressure = self.leTirePressure.text()
+        # --------------------------------------------------------
+        TpmsTireTemprature = self.leTireTemperature.text()
         # --------------------------------------------------------
         sD1 = TpmsTireTempratureStatus + TpmsTirePressureStatus + TpmsLearningStatus + TpmsTireLeakage
         # --------------------------------------------------------
-        sD2 = TpmsTirePressure
+        sD2 = "00000000" # This value will be ignored - Hex value is ready in LineEdit control
         # --------------------------------------------------------
-        sD3 = TpmsTireTemprature
+        sD3 = "00000000" # This value will be ignored - Hex value is ready in LineEdit control
         # --------------------------------------------------------
         sD4 = "00000000"
         # --------------------------------------------------------
@@ -2390,8 +2428,8 @@ class Dialog(QDialog):
         # --------------------------------------------------------
         sHexD0 = format(int(sD0, 2), '02x')
         sHexD1 = format(int(sD1, 2), '02x')
-        sHexD2 = format(int(sD2, 2), '02x')
-        sHexD3 = format(int(sD3, 2), '02x')
+        sHexD2 = TpmsTirePressure
+        sHexD3 = TpmsTireTemprature
         sHexD4 = format(int(sD4, 2), '02x')
         sHexD5 = format(int(sD5, 2), '02x')
         sHexD6 = format(int(sD6, 2), '02x')

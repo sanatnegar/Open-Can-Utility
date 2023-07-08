@@ -29,7 +29,7 @@
     <string notr="true"/>
    </property>
    <property name="currentIndex">
-    <number>1</number>
+    <number>5</number>
    </property>
    <widget class="QWidget" name="tab_connection">
     <attribute name="title">
@@ -9374,7 +9374,7 @@
        <x>10</x>
        <y>0</y>
        <width>351</width>
-       <height>261</height>
+       <height>391</height>
       </rect>
      </property>
      <property name="title">
@@ -9384,13 +9384,13 @@
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>170</y>
+        <y>200</y>
         <width>221</width>
         <height>21</height>
        </rect>
       </property>
       <property name="text">
-       <string>The Tire Temprature Status(0x40F_1.4~1.5)</string>
+       <string>The Tire Temprature Status(0x40F_1.6~1.7)</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -9400,7 +9400,7 @@
       <property name="geometry">
        <rect>
         <x>150</x>
-        <y>230</y>
+        <y>360</y>
         <width>41</width>
         <height>21</height>
        </rect>
@@ -9416,7 +9416,7 @@
       <property name="geometry">
        <rect>
         <x>250</x>
-        <y>50</y>
+        <y>80</y>
         <width>91</width>
         <height>22</height>
        </rect>
@@ -9436,7 +9436,7 @@
       <property name="geometry">
        <rect>
         <x>250</x>
-        <y>110</y>
+        <y>140</y>
         <width>91</width>
         <height>22</height>
        </rect>
@@ -9466,7 +9466,7 @@
       <property name="geometry">
        <rect>
         <x>200</x>
-        <y>230</y>
+        <y>360</y>
         <width>41</width>
         <height>22</height>
        </rect>
@@ -9576,7 +9576,7 @@
       <property name="geometry">
        <rect>
         <x>250</x>
-        <y>80</y>
+        <y>110</y>
         <width>91</width>
         <height>22</height>
        </rect>
@@ -9596,7 +9596,7 @@
       <property name="geometry">
        <rect>
         <x>50</x>
-        <y>50</y>
+        <y>80</y>
         <width>191</width>
         <height>21</height>
        </rect>
@@ -9612,7 +9612,7 @@
       <property name="geometry">
        <rect>
         <x>30</x>
-        <y>110</y>
+        <y>140</y>
         <width>211</width>
         <height>21</height>
        </rect>
@@ -9648,7 +9648,7 @@
       <property name="geometry">
        <rect>
         <x>250</x>
-        <y>200</y>
+        <y>320</y>
         <width>91</width>
         <height>22</height>
        </rect>
@@ -9684,7 +9684,7 @@
       <property name="geometry">
        <rect>
         <x>250</x>
-        <y>140</y>
+        <y>170</y>
         <width>91</width>
         <height>22</height>
        </rect>
@@ -9709,7 +9709,7 @@
       <property name="geometry">
        <rect>
         <x>250</x>
-        <y>170</y>
+        <y>200</y>
         <width>91</width>
         <height>22</height>
        </rect>
@@ -9729,7 +9729,7 @@
       <property name="geometry">
        <rect>
         <x>50</x>
-        <y>80</y>
+        <y>110</y>
         <width>191</width>
         <height>21</height>
        </rect>
@@ -9745,7 +9745,7 @@
       <property name="geometry">
        <rect>
         <x>30</x>
-        <y>140</y>
+        <y>170</y>
         <width>211</width>
         <height>21</height>
        </rect>
@@ -9761,7 +9761,7 @@
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>200</y>
+        <y>320</y>
         <width>231</width>
         <height>21</height>
        </rect>
@@ -9777,7 +9777,7 @@
       <property name="geometry">
        <rect>
         <x>250</x>
-        <y>230</y>
+        <y>360</y>
         <width>91</width>
         <height>23</height>
        </rect>
@@ -9786,12 +9786,148 @@
        <string>Set</string>
       </property>
      </widget>
+     <widget class="QLineEdit" name="leTirePressure">
+      <property name="geometry">
+       <rect>
+        <x>280</x>
+        <y>240</y>
+        <width>61</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+      <property name="readOnly">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="leTireTemperature">
+      <property name="geometry">
+       <rect>
+        <x>280</x>
+        <y>280</y>
+        <width>61</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+      <property name="readOnly">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QDial" name="dialTireTemperature">
+      <property name="geometry">
+       <rect>
+        <x>210</x>
+        <y>270</y>
+        <width>61</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="maximum">
+       <number>254</number>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_82">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>280</y>
+        <width>201</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>The Tire Temerature(0x40F_3.0~3.7</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_83">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>240</y>
+        <width>201</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>The Tire Pressure(0x40F_2.0~2.7)</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+     </widget>
+     <widget class="QDial" name="dialTirePressure">
+      <property name="geometry">
+       <rect>
+        <x>210</x>
+        <y>230</y>
+        <width>61</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="maximum">
+       <number>254</number>
+      </property>
+     </widget>
+     <widget class="QComboBox" name="cmbTireID">
+      <property name="geometry">
+       <rect>
+        <x>250</x>
+        <y>50</y>
+        <width>91</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <item>
+       <property name="text">
+        <string>Rear Right</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Front Right</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Rear Left</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Front Left</string>
+       </property>
+      </item>
+     </widget>
+     <widget class="QLabel" name="label_84">
+      <property name="geometry">
+       <rect>
+        <x>50</x>
+        <y>50</y>
+        <width>191</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>The Tire ID(0x40F_0.4~0.6)</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+     </widget>
     </widget>
     <widget class="QGroupBox" name="groupBox_2">
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>270</y>
+       <y>400</y>
        <width>351</width>
        <height>231</height>
       </rect>
@@ -10075,7 +10211,7 @@
      <widget class="QLabel" name="label_62">
       <property name="geometry">
        <rect>
-        <x>130</x>
+        <x>150</x>
         <y>200</y>
         <width>41</width>
         <height>21</height>
@@ -10091,7 +10227,7 @@
      <widget class="QPushButton" name="btnCbmEmsInfo8Slot">
       <property name="geometry">
        <rect>
-        <x>230</x>
+        <x>250</x>
         <y>200</y>
         <width>91</width>
         <height>23</height>
@@ -10104,7 +10240,7 @@
      <widget class="QComboBox" name="cmbCbmEmsInfo8Slot">
       <property name="geometry">
        <rect>
-        <x>180</x>
+        <x>200</x>
         <y>200</y>
         <width>41</width>
         <height>22</height>
