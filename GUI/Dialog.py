@@ -2340,13 +2340,13 @@ class Dialog(QDialog):
         # --------------------------------------------------------
         # TPMS Tire ID
         if self.cmbTireID.currentIndex() == 0:
-            TpmsTireId = "00"
+            TpmsTireId = "000"
         elif self.cmbTireID.currentIndex() == 1:
-            TpmsTireId = "01"
+            TpmsTireId = "001"
         elif self.cmbTireID.currentIndex() == 2:
-            TpmsTireId = "10"
+            TpmsTireId = "010"
         elif self.cmbTireID.currentIndex() == 3:
-            TpmsTireId = "11"
+            TpmsTireId = "011"
         # --------------------------------------------------------
         # TPMS valid/invalid Info
         if self.cmbTireInformationSignal.currentIndex() == 0:
