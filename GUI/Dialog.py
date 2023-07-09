@@ -11,6 +11,7 @@ import time
 from string import *
 import configparser
 from numpy.core.defchararray import *
+from lookup import LookUp
 
 
 class Dialog(QDialog):
@@ -50,13 +51,10 @@ class Dialog(QDialog):
 
         loadUi('Dialog.ui', self)
         self.LookUp = []
-        self.load_lookup()
         self.extract_message()
         self.bind_controls()
         self.counter = 0
         self.messages = []
-
-
 
         self.leTirePressure.setText(str(self.dialTirePressure.value()))
         self.leTireTemperature.setText(str(self.dialTireTemperature.value()))
@@ -4060,72 +4058,6 @@ class Dialog(QDialog):
         with open('ecu.ini', 'w') as configfile:
             self.config.write(configfile)
 
-    def load_lookup(self):
-        # ID, Description, Start Byte, Start Bit, End Byte, End Bit, Type, Coficient, Operator, Unit, Value, Name
-        self.LookUp.append(["40F", "TPMS System Status", "0", "0", "0", "2", "option", "", "", "", "0", "Normal"])
-        self.LookUp.append(["40F", "TPMS System Status", "0", "0", "0", "2", "option", "", "", "", "1", "Reserved"])
-        self.LookUp.append(["40F", "TPMS System Status", "0", "0", "0", "2", "option", "", "", "", "2", "System Error"])
-        self.LookUp.append(["40F", "TPMS System Status", "0", "0", "0", "2", "option", "", "", "", "3", "Reserved"])
-        self.LookUp.append(["40F", "TPMS System Status", "0", "0", "0", "2", "option", "", "", "", "4", "Reserved"])
-        self.LookUp.append(["40F", "TPMS System Status", "0", "0", "0", "2", "option", "", "", "", "5", "Reserved"])
-        self.LookUp.append(["40F", "TPMS System Status", "0", "0", "0", "2", "option", "", "", "", "6", "Reserved"])
-        self.LookUp.append(["40F", "TPMS System Status", "0", "0", "0", "2", "option", "", "", "", "7", "Reserved"])
-
-        self.LookUp.append(["40F", "The ID of Tire", "0", "4", "0", "6", "option", "", "", "", "0", "Rear Right"])
-        self.LookUp.append(["40F", "The ID of Tire", "0", "4", "0", "6", "option", "", "", "", "1", "Front Right"])
-        self.LookUp.append(["40F", "The ID of Tire", "0", "4", "0", "6", "option", "", "", "", "2", "Rear Left"])
-        self.LookUp.append(["40F", "The ID of Tire", "0", "4", "0", "6", "option", "", "", "", "3", "Front Left"])
-        self.LookUp.append(["40F", "The ID of Tire", "0", "4", "0", "6", "option", "", "", "", "4", "Reserved"])
-        self.LookUp.append(["40F", "The ID of Tire", "0", "4", "0", "6", "option", "", "", "", "5", "Reserved"])
-        self.LookUp.append(["40F", "The ID of Tire", "0", "4", "0", "6", "option", "", "", "", "6", "Reserved"])
-        self.LookUp.append(["40F", "The ID of Tire", "0", "4", "0", "6", "option", "", "", "", "7", "Reserved"])
-
-        self.LookUp.append(["40F", "The Tire Information", "0", "7", "0", "7", "option", "", "", "", "0", "Normal"])
-        self.LookUp.append(["40F", "The Tire Information", "0", "7", "0", "7", "option", "", "", "", "1", "Abnormal"])
-
-        self.LookUp.append(["40F", "The Tire Leakage", "1", "0", "1", "1", "option", "", "", "", "0", "Normal"])
-        self.LookUp.append(["40F", "The Tire Leakage", "1", "0", "1", "1", "option", "", "", "", "1", "Quick Leak"])
-        self.LookUp.append(["40F", "The Tire Leakage", "1", "0", "1", "1", "option", "", "", "", "2", "Reserved"])
-        self.LookUp.append(["40F", "The Tire Leakage", "1", "0", "1", "1", "option", "", "", "", "3", "Reserved"])
-
-        self.LookUp.append(
-            ["40F", "The Tire Learning Status", "1", "2", "1", "3", "option", "", "", "", "0", "Not Learned"])
-        self.LookUp.append(
-            ["40F", "The Tire Learning Status", "1", "2", "1", "3", "option", "", "", "", "1", "Learning"])
-        self.LookUp.append(
-            ["40F", "The Tire Learning Status", "1", "2", "1", "3", "option", "", "", "", "2", "Learn Completed"])
-        self.LookUp.append(
-            ["40F", "The Tire Learning Status", "1", "2", "1", "3", "option", "", "", "", "3", "Learning Failure"])
-
-        self.LookUp.append(["40F", "The Tire Pressure Status", "1", "4", "1", "5", "option", "", "", "", "0", "Normal"])
-        self.LookUp.append(
-            ["40F", "The Tire Pressure Status", "1", "4", "1", "5", "option", "", "", "", "1", "Over Pressure"])
-        self.LookUp.append(
-            ["40F", "The Tire Pressure Status", "1", "4", "1", "5", "option", "", "", "", "2", "Under Pressure"])
-        self.LookUp.append(
-            ["40F", "The Tire Pressure Status", "1", "4", "1", "5", "option", "", "", "", "3", "Reserved"])
-
-        self.LookUp.append(
-            ["40F", "The Tire Temperature Status", "1", "6", "1", "7", "option", "", "", "", "0", "Normal"])
-        self.LookUp.append(
-            ["40F", "The Tire Temperature Status", "1", "6", "1", "7", "option", "", "", "", "1", "Reserved"])
-        self.LookUp.append(
-            ["40F", "The Tire Temperature Status", "1", "6", "1", "7", "option", "", "", "", "2", "High Temperature"])
-        self.LookUp.append(
-            ["40F", "The Tire Temperature Status", "1", "6", "1", "7", "option", "", "", "", "3", "Reserved"])
-
-        self.LookUp.append(["40F", "The Tire Pressure", "2", "0", "2", "7", "scalar", "1.3725", "*", " kPa", "", ""])
-
-        self.LookUp.append(["40F", "The Tire Temperature", "3", "0", "3", "7", "scalar", "40", "-", " C", "", ""])
-
-        self.LookUp.append(
-            ["40F", "The Tire Battery Power Status", "4", "0", "4", "7", "option", "", "", "", "0", "Normal"])
-        self.LookUp.append(
-            ["40F", "The Tire Battery Power Status", "4", "0", "4", "7", "option", "", "", "", "1", "Low Power"])
-        self.LookUp.append(
-            ["40F", "The Tire Battery Power Status", "4", "0", "4", "7", "option", "", "", "", "2", "Reserved"])
-        self.LookUp.append(
-            ["40F", "The Tire Battery Power Status", "4", "0", "4", "7", "option", "", "", "", "3", "Reserved"])
 
         for i in range(int("0" + "7", 8), int("0" + "7", 8) + 1):
             a = str(oct(i))
@@ -4195,7 +4127,7 @@ class Dialog(QDialog):
 
                 #print(self.LookUp)
 
-                for row in self.LookUp:
+                for row in LookUp:
                     row_id = row[0]
                     if row_id == self.new_ID:
                         description = row[1]
@@ -4230,7 +4162,7 @@ class Dialog(QDialog):
                                 #print("message[{}][{}]= {} - {} - {} - Description= {}: {}".format(b[0:1], b[1:2], binValue, decValue, lookupValue ,  description, row_name))
                                 #print("==================================================")
                                 print("{}: {}".format(description, row_name))
-                                extraction_result = extraction_result + "{}: {}({})\r\n".format(description, row_name, decValue)
+                                extraction_result = extraction_result + "{}: {}[{}]\r\n".format(description, row_name, decValue)
                         else:
                             if row_operator == "+":
                                 scalarValue = int(decValue) + float(coficient)
