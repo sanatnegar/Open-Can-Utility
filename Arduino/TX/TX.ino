@@ -18,11 +18,9 @@ int canId;
 uint32_t period;
 String strD0, strD1, strD2, strD3, strD4, strD5, strD6, strD7;
 byte d0, d1, d2, d3, d4, d5, d6, d7;
-String inputString = "";         // a String to hold incoming data
-bool stringComplete = false;  // whether the string is complete
+String inputString = "";          // a String to hold incoming data
+bool stringComplete = false;      // whether the string is complete
 int index1, index2, index3, index4, index5, index6, index7, index8, index9, index10, index11, index12;
-
-
 
 void setup()
 {
@@ -246,7 +244,6 @@ void setup()
   canMsg[19].data[6] = 0x20;
   canMsg[19].data[7] = 0x20;
 
-
   while (!Serial);
   Serial.begin(115200);
 
@@ -263,7 +260,7 @@ void setup()
     timeMsg[i] = timeNow;
   }
 
-  timeDelay[0] = 100000ul;
+  timeDelay[0] = 100000ul; // one message is alive to see system is alive
   timeDelay[1] = 0ul;
   timeDelay[2] = 0ul;
   timeDelay[3] = 0ul;
@@ -300,7 +297,6 @@ void setup()
 void loop()
 {
   if (stringComplete) {
-
     index1 = inputString.indexOf(',');
     index2 = inputString.indexOf(',', index1 + 1);
     index3 = inputString.indexOf(',', index2 + 1);
@@ -364,7 +360,6 @@ void loop()
 
     Serial.println("Arrays Statues: ");
 
-
     for (int j; j <= 19; j++)
     {
       Serial.print(String(j));
@@ -410,7 +405,8 @@ void loop()
         timeMsg[i] = timeNow;
         bFirst[i] = true;
       }//if
-    } else
+    } 
+    else
     {
       if ( (timeNow - timeMsg[i]) >= timeDelay[i] )
       {
@@ -425,7 +421,6 @@ void loop()
       }//if
     }
   }
-  // =========================================================================================
 }//loop
 
 void serialEvent() {

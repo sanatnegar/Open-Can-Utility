@@ -4059,13 +4059,6 @@ class Dialog(QDialog):
             self.config.write(configfile)
 
 
-        for i in range(int("0" + "7", 8), int("0" + "7", 8) + 1):
-            a = str(oct(i))
-            a = a[2:]
-            if len(a) < 2:
-                a = "0" + a
-            print(a[0:1], "-", a[1:2])
-
     def extract_message(self):
         extraction_result = ""
         if (self.current_row > -1 and self.extraction_update == True):
@@ -4080,8 +4073,6 @@ class Dialog(QDialog):
                 self.new_D7 != self.old_D7):
 
                 print("New D0 is:", self.new_D0)
-
-
 
                 D0Bin = (bin(int(self.new_D0, 16))[2:]).zfill(8)
                 D1Bin = (bin(int(self.new_D1, 16))[2:]).zfill(8)
