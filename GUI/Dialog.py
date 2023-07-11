@@ -64,13 +64,10 @@ class Dialog(QDialog):
         self.leVehicleSpeed.setText(str(self.dialVehicleSpeed.value()))
 
         # Connections tab ==============================================================================================
-        self.rxSerialPort = None
-        self.rxSerialDeviceIsConnected = False
+        self.serialPort = None
+        self.serialDeviceIsConnected = False
         self.rxBuffer = None
 
-        self.txSerialPort = None
-        self.txSerialDeviceIsConnected = False
-        self.txBuffer = None
 
         self.config = configparser.ConfigParser()
 
@@ -194,27 +191,19 @@ class Dialog(QDialog):
             return -1
 
     def init_serial_ports(self):
-        self.rxSerialPort = QSerialPort()
-        self.cmbRxPortNames.addItems([serialPort.portName() for serialPort in QSerialPortInfo().availablePorts()])
-        self.rxSerialDeviceIsConnected = False
-        self.rxSerialPort.readyRead.connect(self.on_rx_serial_data_available)
-        self.btnRxDisconnect.setEnabled(False)
+        self.serialPort = QSerialPort()
+        self.cmbPortNames.addItems([serialPort.portName() for serialPort in QSerialPortInfo().availablePorts()])
+        self.serialDeviceIsConnected = False
+        self.serialPort.readyRead.connect(self.on_serial_data_available)
+        self.btnDisconnect.setEnabled(False)
         self.rxBuffer = ""
 
-        self.txSerialPort = QSerialPort()
-        self.cmbTxPortNames.addItems([serialPort.portName() for serialPort in QSerialPortInfo().availablePorts()])
-        self.txSerialDeviceIsConnected = False
-        self.txSerialPort.readyRead.connect(self.on_tx_serial_data_available)
-        self.btnTxDisconnect.setEnabled(False)
-        self.txBuffer = ""
 
     def bind_controls(self):
         # Serial Port Tab
-        self.btnRxConnect.clicked.connect(self.open_rx_serial_port)
-        self.btnRxDisconnect.clicked.connect(self.close_rx_serial_port)
+        self.btnConnect.clicked.connect(self.open_serial_port)
+        self.btnDisconnect.clicked.connect(self.close_serial_port)
 
-        self.btnTxConnect.clicked.connect(self.open_tx_serial_port)
-        self.btnTxDisconnect.clicked.connect(self.close_tx_serial_port)
         # Trace Packets Tab
         self.btnOn01.clicked.connect(self.trace_slot_on_01)
         self.btnOn02.clicked.connect(self.trace_slot_on_02)
@@ -538,105 +527,61 @@ class Dialog(QDialog):
         self.tblRx.cellClicked.connect(self.tbl_rx_cell_clicked_handler)
 
 
-    def open_rx_serial_port(self):
-        if not self.rxSerialDeviceIsConnected:
-            self.rxSerialPort.setPortName(self.cmbRxPortNames.currentText())
-            print("Connecting to: " + self.rxSerialPort.portName())
-            if self.rxSerialPort.open(QIODevice.ReadWrite):
+    def open_serial_port(self):
+        if not self.serialDeviceIsConnected:
+            self.serialPort.setPortName(self.cmbPortNames.currentText())
+            print("Connecting to: " + self.serialPort.portName())
+            if self.serialPort.open(QIODevice.ReadWrite):
 
-                if not self.rxSerialPort.setBaudRate(QSerialPort.BaudRate.Baud115200):
-                    print(self.rxSerialPort.errorString())
+                if not self.serialPort.setBaudRate(QSerialPort.BaudRate.Baud115200):
+                    print(self.serialPort.errorString())
 
-                if not self.rxSerialPort.setDataBits(QSerialPort.DataBits.Data8):
-                    print(self.rxSerialPort.errorString())
+                if not self.serialPort.setDataBits(QSerialPort.DataBits.Data8):
+                    print(self.serialPort.errorString())
 
-                if not self.rxSerialPort.setParity(QSerialPort.Parity.NoParity):
-                    print(self.rxSerialPort.errorString())
+                if not self.serialPort.setParity(QSerialPort.Parity.NoParity):
+                    print(self.serialPort.errorString())
 
-                if not self.rxSerialPort.setFlowControl(QSerialPort.FlowControl.NoFlowControl):
-                    print(self.rxSerialPort.errorString())
+                if not self.serialPort.setFlowControl(QSerialPort.FlowControl.NoFlowControl):
+                    print(self.serialPort.errorString())
 
-                print(self.rxSerialPort.portName() + " receiver serial port is connected")
-                self.rxSerialDeviceIsConnected = True
-                self.btnRxConnect.setEnabled(False)
-                self.btnRxDisconnect.setEnabled(True)
-                self.cmbRxPortNames.setEnabled(False)
+                print(self.serialPort.portName() + " receiver serial port is connected")
+                self.serialDeviceIsConnected = True
+                self.btnConnect.setEnabled(False)
+                self.btnDisconnect.setEnabled(True)
+                self.cmbPortNames.setEnabled(False)
 
             else:
-                qDebug(self.rxSerialPort.portName() + " not connected")
-                qDebug("Error: " + self.rxSerialPort.errorString())
-                self.rxSerialDeviceIsConnected = False
-                self.btnRxConnect.setEnabled(True)
-                self.btnRxDisconnect.setEnabled(False)
+                qDebug(self.serialPort.portName() + " not connected")
+                qDebug("Error: " + self.serialPort.errorString())
+                self.serialDeviceIsConnected = False
+                self.btnConnect.setEnabled(True)
+                self.btnDisconnect.setEnabled(False)
 
         else:
             qDebug("Error: Can not connect, another device is connected")
 
-    def open_tx_serial_port(self):
-        if not self.txSerialDeviceIsConnected:
-            self.txSerialPort.setPortName(self.cmbTxPortNames.currentText())
-            print("Connecting to: " + self.txSerialPort.portName())
-            if self.txSerialPort.open(QIODevice.ReadWrite):
 
-                if not self.txSerialPort.setBaudRate(QSerialPort.BaudRate.Baud115200):
-                    print(self.txSerialPort.errorString())
-
-                if not self.txSerialPort.setDataBits(QSerialPort.DataBits.Data8):
-                    print(self.txSerialPort.errorString())
-
-                if not self.txSerialPort.setParity(QSerialPort.Parity.NoParity):
-                    print(self.txSerialPort.errorString())
-
-                if not self.txSerialPort.setFlowControl(QSerialPort.FlowControl.NoFlowControl):
-                    print(self.txSerialPort.errorString())
-
-                print(self.txSerialPort.portName() + " receiver serial port is connected")
-                self.txSerialDeviceIsConnected = True
-                self.btnTxConnect.setEnabled(False)
-                self.btnTxDisconnect.setEnabled(True)
-                self.cmbTxPortNames.setEnabled(False)
-
-            else:
-                qDebug(self.txSerialPort.portName() + " not connected")
-                qDebug("Error: " + self.txSerialPort.errorString())
-                self.txSerialDeviceIsConnected = False
-                self.btnTxConnect.setEnabled(True)
-                self.btnTxDisconnect.setEnabled(False)
-
-        else:
-            qDebug("Error: Can not connect, another device is connected")
-
-    def close_rx_serial_port(self):
-        if self.rxSerialDeviceIsConnected:
-            self.rxSerialPort.close()
-            self.rxSerialDeviceIsConnected = False
+    def close_serial_port(self):
+        if self.serialDeviceIsConnected:
+            self.serialPort.close()
+            self.serialDeviceIsConnected = False
             print("rx connection closed")
-            self.btnRxConnect.setEnabled(True)
-            self.btnRxDisconnect.setEnabled(False)
-            self.cmbRxPortNames.setEnabled(True)
+            self.btnConnect.setEnabled(True)
+            self.btnDisconnect.setEnabled(False)
+            self.cmbPortNames.setEnabled(True)
             self.messages = []
             self.update_table()
 
         else:
             print("Error: Can not disconnect, no device is connected")
 
-    def close_tx_serial_port(self):
-        if self.txSerialDeviceIsConnected:
-            self.txSerialPort.close()
-            self.txSerialDeviceIsConnected = False
-            print("tx connection closed")
-            self.btnTxConnect.setEnabled(True)
-            self.btnTxDisconnect.setEnabled(False)
-            self.cmbTxPortNames.setEnabled(True)
 
-        else:
-            print("Error: Can not disconnect, no device is connected")
-
-    def on_rx_serial_data_available(self):
+    def on_serial_data_available(self):
         # print("Serial Data Available")
-        if self.rxSerialDeviceIsConnected:
+        if self.serialDeviceIsConnected:
             try:
-                self.rxBuffer += str(self.rxSerialPort.readLine(), "utf-8")
+                self.rxBuffer += str(self.serialPort.readLine(), "utf-8")
                 # self.rxBuffer.encode("utf-8")
                 # print(self.rxBuffer)
                 start_sign_position = self.rxBuffer.find("#")
@@ -645,7 +590,7 @@ class Dialog(QDialog):
                 if "#" in self.rxBuffer and "|" in self.rxBuffer and start_sign_position < end_sign_pos:
                     self.update_message_list(self.rxBuffer)
                     self.rxBuffer = ""
-                    self.rxSerialPort.flush()
+                    self.serialPort.flush()
 
             except Exception as e:
                 pass
@@ -654,8 +599,6 @@ class Dialog(QDialog):
                 # print(exc_type, fname, exc_tb.tb_lineno)
                 # print(str(e))
 
-    def on_tx_serial_data_available(self):
-        print("Tx Serial port Data Available")
 
     def update_message_list(self, buffer):
         try:
@@ -1148,7 +1091,7 @@ class Dialog(QDialog):
                          str(self.leTxPeriod20.text()))
 
     def send_packet(self, strSlot, strID, strDlc, strD0, strD1, strD2, strD3, strD4, strD5, strD6, strD7, strPeriod):
-        if self.txSerialDeviceIsConnected == True:
+        if self.serialDeviceIsConnected == True:
             try:
                 sId = str(int(strID, 16))
                 print("ID: ", sId)
@@ -1195,7 +1138,7 @@ class Dialog(QDialog):
                 strPacket = strSlot + "," + sId + "," + strDlc + "," + sD0 + "," + sD1 + "," + sD2 + "," + sD3 + "," + sD4 + "," + sD5 + "," + sD6 + "," + sD7 + "," + strPeriod + "\n"
 
                 print("Tx Packet: ", strPacket)
-                self.txSerialPort.write(strPacket.encode())
+                self.serialPort.write(strPacket.encode())
 
             except:
                 pass

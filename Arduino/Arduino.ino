@@ -3,6 +3,7 @@
 
 int post_transmit_delay = 1;
 struct can_frame canMsg[20];
+struct can_frame canMsgRx;
 MCP2515 mcp2515(10);
 uint32_t offsetTime[20];
 uint32_t timeNow;
@@ -21,63 +22,67 @@ byte d0, d1, d2, d3, d4, d5, d6, d7;
 String inputString = "";          // a String to hold incoming data
 bool stringComplete = false;      // whether the string is complete
 int index1, index2, index3, index4, index5, index6, index7, index8, index9, index10, index11, index12;
+boolean toggle = false;
+byte bEmptyData;
 
 void setup()
 {
-  canMsg[0].can_id  = 0x01;
-  canMsg[0].can_dlc = 8;
-  canMsg[0].data[0] = 0x01;
-  canMsg[0].data[1] = 0x01;
-  canMsg[0].data[2] = 0x01;
-  canMsg[0].data[3] = 0x01;
-  canMsg[0].data[4] = 0x01;
-  canMsg[0].data[5] = 0x01;
-  canMsg[0].data[6] = 0x01;
-  canMsg[0].data[7] = 0x01;
+  pinMode(LED_BUILTIN, OUTPUT);
 
-  canMsg[1].can_id  = 0x20F;
+  canMsg[0].can_id  = 0x181;
+  canMsg[0].can_dlc = 4;
+  canMsg[0].data[0] = 0x09;
+  canMsg[0].data[1] = 0x00;
+  canMsg[0].data[2] = 0x00;
+  canMsg[0].data[3] = 0x00;
+  canMsg[0].data[4] = 0x00;
+  canMsg[0].data[5] = 0x00;
+  canMsg[0].data[6] = 0x00;
+  canMsg[0].data[7] = 0x00;
+
+  canMsg[1].can_id  = 0x241;
   canMsg[1].can_dlc = 8;
-  canMsg[1].data[0] = 0x02;
-  canMsg[1].data[1] = 0x02;
-  canMsg[1].data[2] = 0x02;
+  canMsg[1].data[0] = 0x00;
+  canMsg[1].data[1] = 0x00;
+  canMsg[1].data[2] = 0x00;
   canMsg[1].data[3] = 0x02;
-  canMsg[1].data[4] = 0x02;
-  canMsg[1].data[5] = 0x02;
-  canMsg[1].data[6] = 0x02;
-  canMsg[1].data[7] = 0x02;
+  canMsg[1].data[4] = 0x00;
+  canMsg[1].data[5] = 0x0A;
+  canMsg[1].data[6] = 0x00;
+  canMsg[1].data[7] = 0x00;
 
-  canMsg[2].can_id  = 0x308;
-  canMsg[2].can_dlc = 8;
-  canMsg[2].data[0] = 0x03;
-  canMsg[2].data[1] = 0x03;
-  canMsg[2].data[2] = 0x03;
-  canMsg[2].data[3] = 0x03;
-  canMsg[2].data[4] = 0x03;
-  canMsg[2].data[5] = 0x03;
-  canMsg[2].data[6] = 0x03;
-  canMsg[2].data[7] = 0x03;
+  canMsg[2].can_id  = 0x40F;
+  canMsg[2].can_dlc = 6;
+  canMsg[2].data[0] = 0x20;
+  canMsg[2].data[1] = 0x28;
+  canMsg[2].data[2] = 0x9B;
+  canMsg[2].data[3] = 0x4C;
+  canMsg[2].data[4] = 0x00;
+  canMsg[2].data[5] = 0x00;
+  canMsg[2].data[6] = 0x00;
+  canMsg[2].data[7] = 0x00;
 
-  canMsg[3].can_id  = 0x139;
+  canMsg[3].can_id  = 0x405;
   canMsg[3].can_dlc = 8;
-  canMsg[3].data[0] = 0x04;
-  canMsg[3].data[1] = 0x04;
-  canMsg[3].data[2] = 0x04;
-  canMsg[3].data[3] = 0x04;
-  canMsg[3].data[4] = 0x04;
-  canMsg[3].data[5] = 0x04;
-  canMsg[3].data[6] = 0x04;
-  canMsg[3].data[7] = 0x04;
+  canMsg[3].data[0] = 0x00;
+  canMsg[3].data[1] = 0x00;
+  canMsg[3].data[2] = 0x55;
+  canMsg[3].data[3] = 0x55;
+  canMsg[3].data[4] = 0x55;
+  canMsg[3].data[5] = 0x55;
+  canMsg[3].data[6] = 0x55;
+  canMsg[3].data[7] = 0x55;
 
-  canMsg[4].can_id  = 0x08F;
+  canMsg[4].can_id  = 0x443;
   canMsg[4].can_dlc = 8;
-  canMsg[4].data[0] = 0x05;
-  canMsg[4].data[1] = 0x05;
-  canMsg[4].data[2] = 0x05;
-  canMsg[4].data[3] = 0x05;
-  canMsg[4].data[4] = 0x05;
-  canMsg[4].data[5] = 0x05;
-  canMsg[4].data[6] = 0x05;
-  canMsg[4].data[7] = 0x05;
+  canMsg[4].data[0] = 0x00;
+  canMsg[4].data[1] = 0xEB;
+  canMsg[4].data[2] = 0x10;
+  canMsg[4].data[3] = 0x00;
+  canMsg[4].data[4] = 0x00;
+  canMsg[4].data[5] = 0xF0;
+  canMsg[4].data[6] = 0x41;
+  canMsg[4].data[7] = 0x00;
 
   canMsg[5].can_id  = 0x10F;
   canMsg[5].can_dlc = 8;
@@ -260,11 +265,11 @@ void setup()
     timeMsg[i] = timeNow;
   }
 
-  timeDelay[0] = 100000ul; // one message is alive to see system is alive
-  timeDelay[1] = 0ul;
-  timeDelay[2] = 0ul;
-  timeDelay[3] = 0ul;
-  timeDelay[4] = 0ul;
+  timeDelay[0] = 0ul; //100000ul; // one message is alive to see system is alive
+  timeDelay[1] = 0ul; //100000ul;
+  timeDelay[2] = 0ul; //100000ul;
+  timeDelay[3] = 0ul; //100000ul;
+  timeDelay[4] = 0ul; //100000ul;
   timeDelay[5] = 0ul;
   timeDelay[6] = 0ul;
   timeDelay[7] = 0ul;
@@ -296,6 +301,37 @@ void setup()
 
 void loop()
 {
+  if (mcp2515.readMessage(&canMsgRx) == MCP2515::ERROR_OK) {
+    Serial.print("#");
+    Serial.print(canMsgRx.can_id, HEX); // print ID
+    Serial.print(",");
+    Serial.print(canMsgRx.can_dlc, HEX); // print DLC
+    Serial.print(",");
+
+    for (int i = 0; i < canMsgRx.can_dlc - 1; i++)  { // print the data
+      Serial.print(canMsgRx.data[i], HEX);
+      Serial.print(",");
+    }
+
+
+    Serial.print(canMsgRx.data[canMsgRx.can_dlc - 1], HEX); // Comma after the last data byte is no longer neeeded
+    Serial.print(",");
+
+    bEmptyData = 8 - canMsgRx.can_dlc;
+
+    if (bEmptyData > 0)
+    {
+      for (int i = 0; i < bEmptyData; i++)
+      {
+        Serial.print("0");
+        Serial.print(",");
+      }
+    }
+
+    Serial.print(String(micros()));
+    Serial.println("|");
+  }
+
   if (stringComplete) {
     index1 = inputString.indexOf(',');
     index2 = inputString.indexOf(',', index1 + 1);
@@ -312,7 +348,7 @@ void loop()
     strSlot = inputString.substring(0, index1);
     strCanId = inputString.substring(index1 + 1, index2);
     strDlc = inputString.substring(index2 + 1, index3);
-    
+
     strMyData[0] = inputString.substring(index3 + 1, index4);
     strMyData[1] = inputString.substring(index4 + 1, index5);
     strMyData[2] = inputString.substring(index5 + 1, index6);
@@ -329,7 +365,7 @@ void loop()
     slot = strSlot.toInt();
     canId = strCanId.toInt();
     dlc = strDlc.toInt();
-    
+
     for (int i = 0; i < dlc; i++)
     {
       bMyData[i] = strMyData[i].toInt();
@@ -339,10 +375,10 @@ void loop()
 
     canMsg[slot].can_id  = canId;
     canMsg[slot].can_dlc = dlc;
-    
+
     for (int i = 0 ; i < 8; i++)
     {
-      canMsg[slot].data[i] = 0x00; 
+      canMsg[slot].data[i] = 0x00;
     }
 
     for (int i = 0 ; i < dlc; i++)
@@ -358,8 +394,55 @@ void loop()
       mcp2515.sendMessage(&canMsg[slot]);
     }
 
+    
     Serial.println("Arrays Statues: ");
 
+    Serial.print(strSlot);
+    Serial.print("-");
+    Serial.print(strCanId);
+    Serial.print("-");
+    Serial.print(strDlc);
+    Serial.print("-");
+    Serial.print(strMyData[0]);
+    Serial.print("-");
+    Serial.print(strMyData[1]);
+    Serial.print("-");
+    Serial.print(strMyData[2]);
+    Serial.print("-");
+    Serial.print(strMyData[3]);
+    Serial.print("-");
+    Serial.print(strMyData[4]);
+    Serial.print("-");
+    Serial.print(strMyData[5]);
+    Serial.print("-");
+    Serial.print(strMyData[6]);
+    Serial.print("-");
+    Serial.print(strMyData[7]);
+    Serial.println("");
+
+    Serial.print(String(timeDelay[0]));
+    Serial.print("-");
+    Serial.print(String(timeDelay[1]));
+    Serial.print("-");
+    Serial.print(String(timeDelay[2]));
+    Serial.print("-");
+    Serial.print(String(timeDelay[3]));
+    Serial.print("-");
+    Serial.print(String(timeDelay[4]));
+    Serial.print("-");
+    Serial.print(String(timeDelay[5]));
+    Serial.print("-");
+    Serial.print(String(timeDelay[6]));
+    Serial.print("-");
+    Serial.print(String(timeDelay[7]));
+    Serial.print("-");
+    Serial.print(String(timeDelay[8]));
+    Serial.print("-");
+    Serial.println(String(timeDelay[9]));
+
+    
+
+    
     for (int j; j <= 19; j++)
     {
       Serial.print(String(j));
@@ -386,6 +469,8 @@ void loop()
       Serial.print("-");
       Serial.println(String(timeDelay[j]));
     }
+    
+    
   }
   // sending messages
   for (int i = 0; i <= 19; i++)
@@ -405,7 +490,7 @@ void loop()
         timeMsg[i] = timeNow;
         bFirst[i] = true;
       }//if
-    } 
+    }
     else
     {
       if ( (timeNow - timeMsg[i]) >= timeDelay[i] )
